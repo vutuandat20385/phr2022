@@ -1,0 +1,141 @@
+
+@font-face {
+    font-family: 'roboto';
+    src: url("../fonts/Roboto-Light.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+}
+
+body{
+    font-family: 'roboto';
+}
+
+.horizontal-menu .top-navbar .navbar-brand-wrapper .navbar-brand img {
+    height: 50px;
+}
+
+.div-phantrang ul.pagination li {
+    padding: 0px 10px;
+    margin: 2px 5px;
+    background: #0d6efd;
+    border-radius: 50px;
+}
+
+.div-phantrang ul.pagination li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.div-phantrang ul.pagination li:hover {
+    background: #f5b605;
+}
+
+.div-phantrang ul.pagination li.active {
+    background: #f22107;
+}
+
+select.form-control {
+    padding: 1rem 1.375rem;
+}
+
+.miniTextBox{
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #b5b5b5;
+}
+
+.p-lr-1{
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.footer .footer-wrap {
+    padding: 15px 1rem;
+}
+
+.menu-icon {
+    font-size: 5rem;
+    color: #111;
+}
+
+a#btnImport {
+    float: right;
+    margin-bottom: 10px;
+}
+
+.item-cover {
+    padding: 20px;
+}
+
+img.item-giao-dich {
+    width: 100%;
+}
+
+img.setting-item {
+    width: 100%;
+    height: 70px;
+}
+
+.setting-cover {
+    padding: 10px;
+    border: 1px solid #b7b9bb;
+    border-radius: 5px;
+    -webkit-box-shadow: 5px 5px 5px 0px rgb(0 0 0 / 28%);
+    -moz-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.28);
+    box-shadow: 5px 5px 5px 0px rgb(0 0 0 / 28%);
+}
+
+.setting-item-name {
+    text-align: center;
+    margin: 10px 0;
+    padding: 10px 0;
+    background: #f0f3f6;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.tab-content {
+    padding-top: 0;
+}
+
+.tab-content-item {
+    padding: 12px 0;
+}
+
+.brand-logo {
+    width: 110px;
+}
+
+.horizontal-menu .bottom-navbar .page-navigation > .nav-item > .nav-link {
+    padding: 10px 25px;
+}
+
+.contentHeader {
+    text-transform: uppercase;
+    color: #111;
+    font-weight: 600;
+}
+
+.horizontal-menu .bottom-navbar {
+    /* background-image: linear-gradient(#0dfd3ce0, #ffffff); */
+    -webkit-box-shadow: 5px 5px 15px -5px rgb(0 0 0 / 75%);
+    -moz-box-shadow: 5px 5px 15px -5px rgba(0,0,0,0.75);
+    box-shadow: 5px 5px 15px -5px rgb(0 0 0 / 75%);
+}
+
+.horizontal-menu .submenu {
+    top: 68px !important;
+}
+
+.form-control, .typeahead, .tt-query, .tt-hint {
+    padding: 0.55rem 1.375rem;
+    border-radius: 3px !important;
+}
+
+.content-wrapper {
+    padding: 0.5rem 0.5rem;
+}
+
+.card-body {
+    padding: 10px !important;
+}
