@@ -1,15 +1,17 @@
-<div class="card" style="margin-top:0 !important;" id="tblTransactionsBody">
-    <div class="row card-header" style="padding-bottom: 0;">
-        <div class="col-12"><h3 class="card-title"><?= $pageTitle; ?></h3></div>
-        <div class="col-4"></div>
+<div class="card p-3">
+    <div class="row">
+        <div class="col-4 pt-1">
+            <h4 class="contentHeader"><?= $panelTitle; ?></h4>
+        </div>
         <div class="col-2"><input type="text" name="startDate" class="form-control timePublicNoti miniTextBox" placeholder="Ngày bắt đầu" value="<?= $start; ?>"></div>
         <div class="col-2"><input type="text" name="endDate" class="form-control timePublicNoti miniTextBox" placeholder="Ngày kết thúc" value="<?= $end; ?>"></div>
         <div class="col-3"><input type="text" name="search_info" class="form-control miniTextBox" placeholder="Tìm theo Số điện thoại/Ngân hàng" value="<?= $info; ?>"></div>
-        <div class="col-1" style="padding: 0 30px 0 0;"><button class="btn btn-success" style="width: 100%;" id="btn_timkiem">Tìm kiếm</button></div>
+        <div class="col-1" style="padding: 0 15px 0 0;"><button class="btn btn-success" style="width: 100%;" id="btn_timkiem">Tìm kiếm</button></div>
     </div>
-    <div class="card-body" style="padding-top: 0;">
+
+    <div class="col-12 p-0 mt-2">
         <?php if ($transactions) { ?>
-        <table id="tblNoti" class="table table-bordered table-striped">
+        <table id="tblNoti" class="table table-bordered table-striped d4u-table">
             <thead>
                 <tr class="bg-primary text-white">
                     <th class="text-center" >STT</th>
@@ -54,7 +56,9 @@
                 <?php endif; ?>            
             </div>           
         </div>  
-        <?php } ?>
+        <?php }else{
+                        echo 'Chưa có nội dung';
+                    }  ?>
 
     </div>
     

@@ -1,11 +1,12 @@
-<div class="row p-1" style="margin-left: 0;">
-    <div class="col-12">
-        <h4 ><?= $panelTitle; ?></h4>
-    </div>
-    <div class="col-md-4"  style="margin-top: 3px;">
-        <input type="text" class="form-control miniTextBox" value="" placeholder="Tìm kiếm Tên/SĐT" id="inpInfo">
-    </div>
-    <div class="col-md-2 p-1">
+<div class="card p-3">
+    <div class="row m-0">
+        <div class="col-3 pt-2">
+            <h4 class="contentHeader"><?= $panelTitle; ?></h4>
+        </div>
+        <div class="col-md-2 offset-1" style="margin-top: 3px;">
+            <input type="text" class="form-control miniTextBox" value="" placeholder="Tìm kiếm Tên/SĐT" id="inpInfo">
+        </div>
+    <div class="col-md-1 p-1">
         <select class="form-control" name="" id="sltCity">
             <option class="p-2" value="">Chọn Tỉnh/Thành phố</option>
              <?php foreach($city_village_list as $k => $c){ ?>
@@ -21,7 +22,7 @@
             
         </select>
     </div>
-    <div class="col-md-2 p-1">
+    <div class="col-md-1 p-1">
         <select class="form-control" name="" id="sltCode">
             <option class="p-2" value="">Chọn Mã giới thiệu</option>
             <?php foreach($referralCode as $k => $rc){ ?>
@@ -87,8 +88,8 @@
                         <td> <?= $user['city_village']; ?></td>
                         <td> 
                             
-                            <a class="text-info" data-toggle="modal" data-target="#viewAccountModal_<?= $user['value']; ?>"> <i class="fa fa-pencil" aria-hidden="true"></i></a>
-                            <a class="text-danger" href="#"> <i class="fa fa-trash-o" aria-hidden="true"></i>
+                            <a class="text-info p-0" data-toggle="modal" data-target="#viewAccountModal_<?= $user['value']; ?>"> <i class="fa fa-pencil" aria-hidden="true"></i></a>
+                            <a class="text-danger p-0" href="#"> <i class="fa fa-trash-o" aria-hidden="true"></i>
                         </td>
                     </tr>
 
@@ -121,7 +122,7 @@
     </div>
     <div class="col-md-6 div-phantrang">
         <?php if ($pager):?>
-            <?php $pagi_path = 'trang-quan-tri/tai-khoan/khach-hang'; ?>
+            <?php $pagi_path = 'trang-quan-tri/tai-khoan/tim-kiem-khach-hang'; ?>
             <?php $pager->setPath($pagi_path); ?>
             <?= $pager->links(); ?>                  
         <?php endif; ?>            

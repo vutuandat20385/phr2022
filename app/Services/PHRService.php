@@ -6,6 +6,8 @@ use App\Models\GroupAnnualCheckupModel;
 use App\Models\StandardValueModel;
 use App\Models\UserModel;
 use App\Models\DeviceTokenModel;
+use App\Models\CovidTestModel;
+use App\Models\SettingsModel;
 
 class PHRService extends BaseService{
 
@@ -16,6 +18,8 @@ class PHRService extends BaseService{
         $this->standard = new StandardValueModel();
 		$this->user = new UserModel();
 		$this->token = new DeviceTokenModel();
+		$this->covid = new CovidTestModel();
+        $this->setting = new SettingsModel();
 
         $this->db = \Config\Database::connect();
     }
@@ -26,7 +30,8 @@ class PHRService extends BaseService{
                     LEFT JOIN users u ON u.user_id = ac.user_id 
                     LEFT JOIN person p ON p.person_id = u.person_id
                     LEFT JOIN person_address pad ON pad.person_id = u.person_id
-                    WHERE (hospital_id = 'd4u' AND (Occupation = 'auto' OR Occupation is null) )";
+                    WHERE (hospital_id = 'd4u' AND (Occupation = 'auto' OR Occupation is null))";
+                    
         if ($data['info'] !== '') {
             $query .= " AND (full_name like '%".$data['info']."%' OR phone_number like '%".$data['info']."%')";
         }
@@ -44,7 +49,6 @@ class PHRService extends BaseService{
             foreach ($allPHR as $k => $phr) {
                 $allPHR[$k]['history']      = $this->getPatientPHR('khach-le', $phr['user_id'], 'd4u');
                 $allPHR[$k]['lastCheckup']  = $this->getPatientLastCheckup('khach-le', $phr['user_id'], 'd4u');
-              
             }
         }
 
@@ -79,6 +83,19 @@ class PHRService extends BaseService{
             }
         }
 
+        return $allPHR;
+    }
+
+	public function getAllD4UCovidPHR($data){
+
+        $query = "SELECT * FROM d4u_covid_test ORDER BY id DESC";
+
+		if($data['start'] !== '' && $data['limit'] !== ''){
+            $query .= "  LIMIT ".$data['start'].",".$data['limit'];
+        }
+
+		$allPHR = $this->db->query($query)->getResultArray();
+        
         return $allPHR;
     }
 
@@ -300,7 +317,57 @@ class PHRService extends BaseService{
         return $this->annual->set($data)->where(['annual_checkup_id' => $id])->update();
     }
 
-	
+	public function updateTestCovidRecord($data, $field){
+        switch ($field) {
+            case 'record':
+                $newDate = \DateTime::createFromFormat('d/m/Y', $data['date']);
+                $result = $this->covid->set(['date' => $newDate->format('Y-m-d'), 'result' => $data['result'], 'type' => $data['type']])->where(['id' => $data['id']])->update();
+                break;
+            case 'status':
+                $record = $this->covid->where(['id' => $data['id']])->first();
+                if ($record['status'] == '0') {
+                    $result = $this->covid->set(['status' => 1])->where(['id' => $data['id']])->update();
+                } else {
+                    $result = $this->covid->set(['status' => 0])->where(['id' => $data['id']])->update();
+                }
 
+                break;
+            default:
+                # code...
+                break;
+        }
+        return $result;
+    }
+
+    public function updateResult($data){
+        return $this->covid->set(['file_result' => $data['file_result']])->where(['id' => $data['id']])->update();
+    }
+
+    public function getTestInfo($id){
+        return $this->covid->where(['id' => $id])->first();
+    }
+
+    public function getTestCovidResultRecord($id){
+        return $this->covid->where(['id' => $id])->first();
+    }
+
+    public function getSMSContent($settingName, $settingType, $data){
+
+        $content = $this->setting->where(['settingName' => $settingName, 'settingType' => $settingType])->first();
+        $smsContent = $content['settingValue'];
+        if (isset($data['hospital']) && $data['hospital'] != '') {
+            $smsContent = str_replace('[benh-vien]', $data['hospital'], $smsContent);
+        }
+
+        if (isset($data['date']) && $data['date'] != '') {
+            $smsContent = str_replace('[ngay]', $data['date'], $smsContent);
+        }
+
+        if (isset($data['ketqua'])) {
+            $smsContent = str_replace('[ketqua]', $data['ketqua'], $smsContent);
+        }
+
+        return $smsContent;
+    }
 
 }

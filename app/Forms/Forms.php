@@ -25,5 +25,9 @@ class Forms{
 		return view('AfterLogin/forms/importGroupModal',$formData);
 	}
 
+	public function form_importTestCovidModal($formData){
+		return view('AfterLogin/forms/importTestCovidModal',$formData);
+	}
+
 	
 }

@@ -167,4 +167,20 @@ class TransactionService extends BaseService{
         return $this->db->query($sql)->getResultArray();
     }
 
+    public function checkPhoneNumber($phoneNumber){
+        $user = $this->user->where(['username' => $phoneNumber, 'retired' => 0])->first();
+        if (!empty($user)) {
+            return $user['user_id'];
+        } else
+            return false;
+    }
+
+    public function getWalletInfo($user_id){
+        return $this->wallet->where(['user_id' => $user_id])->first();
+    }
+
+    public function saveHistoryAutoTransfer($data){
+        return $this->ath->save($data);
+    }
+
 }

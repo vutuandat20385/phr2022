@@ -1,6 +1,6 @@
 <div class="card p-3">
     <div class="row m-0">
-        <div class="col-3 pt-2">
+        <div class="col-4 pt-2">
             <h4 class="contentHeader"><?= $panelTitle; ?></h4>
         </div>
         <div class="col-md-2 offset-1" style="margin-top: 3px;">
@@ -32,9 +32,9 @@
             
         </div>
     
-        <div class="col-md-1 text-right p-lr-1">
+        <!-- <div class="col-md-1 text-right p-lr-1">
             <button class="btn btn-primary" style="color: #fff; width: 100%" id="btnUpdate" data-toggle="modal" data-target="#updateModal"> Cập nhật </button>
-        </div>
+        </div> -->
         <div class="col-md-1 text-right p-lr-1" style="padding-right: 15px;">
             <button class="btn btn-primary" style="color: #fff; width: 100%" id="btnUpdateDs" data-toggle="modal" data-target="#updateDsModal"> Thêm DS </button>
         </div>
@@ -52,7 +52,7 @@
                 <th class="text-white text-center" style="width: 15%;">Mã giới thiệu</th>
                 <th class="text-white text-center" style="width: 10%;">Ngày tạo</th>
                 <th class="text-white text-center" style="width: 17%;">Tỉnh/Thành phố</th>
-                <th class="text-white text-center" style="width: 5%;"></th>
+                <th class="text-white text-center" style="width: 50px;"></th>
             </tr>
             </thead>
             <tbody>
@@ -76,8 +76,8 @@
                         <td> <?= date('d-m-Y', strtotime($user['date_created'])); ?></td>
                         <td> <?= $user['city_village']; ?></td>
                         <td> 
-                            <a class="text-info" data-toggle="modal" data-target="#viewAccountModal_<?= $user['value']; ?>"> <i class="fa fa-pencil" aria-hidden="true"></i></a>
-                            <a class="text-danger" href="#"> <i class="fa fa-trash-o" aria-hidden="true"></i>
+                            <a class="text-info p-0" data-toggle="modal" data-target="#viewAccountModal_<?= $user['value']; ?>"> <i class="fa fa-pencil" aria-hidden="true"></i></a>
+                            <a class="text-danger p-0" href="#"> <i class="fa fa-trash-o" aria-hidden="true"></i>
                         </td>
                     </tr>
 
@@ -195,7 +195,7 @@
         $("#sltCity").select2();
 
         $('#btnSearch').click(function(){
-            var link = '<?= base_url(); ?>' + '/trang-quan-tri/tai-khoan/tim-kiem-khach-hang?';
+            var link = '<?= base_url(); ?>' + '/trang-quan-tri/tai-khoan/khach-hang?';
             var info = $('#inpInfo').val();
             var city = $('#sltCity').val();
             var rCode = $('#sltCode').val();
@@ -206,7 +206,7 @@
         });
 
         $('#btnExport').click(function(){
-            var link = '<?= base_url(); ?>' + '/export-account?';
+            var link = '<?= base_url(); ?>' + '/trang-quan-tri/tai-khoan/export-account?';
             var info = $('#inpInfo').val();
             var city = $('#sltCity').val();
             var rCode = $('#sltCode').val();

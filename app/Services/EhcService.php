@@ -243,5 +243,9 @@ class EhcService extends BaseService{
         return $this->temp->save($data);
     }
 
+    public function checkUserApi($data){
+        return $this->user->where($data)->first();
+    }
+
 
 }

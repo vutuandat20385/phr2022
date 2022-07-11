@@ -394,7 +394,7 @@
                 </div>
                 <div class="card-body ">
                     <div class="row">
-                        <table class="table table-bordered table-hover">
+                        <table class="table table-bordered table-hover" style="width: 97%; margin: 0 auto;">
                             <tr>
                                 <td>
                                     <?php foreach($chi_so_khac as $k => $kq){

@@ -14,6 +14,7 @@
 <!-- plugin css for this page -->
 <!-- End plugin css for this page -->
 <link rel="stylesheet" href="public/assets/afterlogin/css/menu.css">
+<link rel="stylesheet" href="public/assets/afterlogin/css/jquery-ui.css">
 <!-- inject:css -->
 <link rel="stylesheet" href="public/assets/afterlogin/css/style.css">
 <link rel="stylesheet" href="public/assets/afterlogin/css/d4u.css">
@@ -25,3 +26,35 @@
 <script src="public/assets/afterlogin/js/bootstrap.min.js" type="text/javascript"></script>
 <script src="public/assets/afterlogin/js/jquery.datetimepicker.js" type="text/javascript"></script>
 <script src="public/assets/afterlogin/js/select2.min.js" type="text/javascript"></script>
+
+<script src="public/assets/afterlogin/js/template.js"></script>
+<script src="public/assets/afterlogin/js/jquery-ui.js"></script>
+<script src="public/assets/afterlogin/vendors/chart.js/Chart.min.js"></script>
+<script src="public/assets/afterlogin/vendors/progressbar.js/progressbar.min.js"></script>
+    <script src="public/assets/afterlogin/vendors/chartjs-plugin-datalabels/chartjs-plugin-datalabels.js"></script>
+    <script src="public/assets/afterlogin/vendors/justgage/raphael-2.1.4.min.js"></script>
+    <script src="public/assets/afterlogin/vendors/justgage/justgage.js"></script>
+<script src="public/assets/afterlogin/js/jquery.cookie.js" type="text/javascript"></script>
+<!-- Custom js for this page-->
+<script src="public/assets/afterlogin/js/dashboard.js"></script>
+<script src="public/assets/afterlogin/js/d4u.js"></script>
+<!-- End custom js for this page-->
+
+<?php
+    function text_limit($str,$limit=10) {
+        $str_s = '';
+        if(stripos($str," ")){
+            $ex_str = explode(" ",$str);
+            if(count($ex_str)>$limit){
+                for($i=0;$i<$limit;$i++){
+                    $str_s.=$ex_str[$i]." ";
+                }
+                return $str_s.'...';
+            }else{
+                return $str;
+            }
+        }else{
+            return $str;
+        }
+}
+?>

@@ -35,4 +35,19 @@ class LoginService extends BaseService{
         }
         
     }
+
+    public function addUser2($data){
+        // check username exits
+        $check = $this->user2->where(['username' => $data['username']])->first();
+        if(empty($check)){
+            $this->user2->save($data);
+            return array(
+                'status'    => 'Success'
+            );
+        }else{
+            return array(
+                'status'    => 'Username đã tồn tại'
+            );
+        }
+    }
 }

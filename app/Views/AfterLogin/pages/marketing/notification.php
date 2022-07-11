@@ -6,7 +6,7 @@
     </div>
     
     <?php if ($mktList) { ?>
-        <table id="tblNoti" class="table table-bordered">
+        <table id="tblNoti" class="table table-bordered d4u-table">
             <thead>
                 <tr class="bg-primary text-white">
                     <th class="text-center">STT</th>
@@ -48,9 +48,9 @@
                             <a class="text-info" data-toggle="modal" data-target="#editMktNoti<?= $val['id']; ?>"> <i class="fa fa-pencil" aria-hidden="true"></i></a>
                             <?php
                                 if($val['status'] > 0){ ?>
-                                    <a class="text-black" id="deleteMktNoti<?= $val['id']; ?>" onClick="deleteNoti(<?= $val['id']; ?>,0)" title="Xóa"> <i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                    <a class="text-black p-0" id="deleteMktNoti<?= $val['id']; ?>" onClick="deleteNoti(<?= $val['id']; ?>,0)" title="Xóa"> <i class="fa fa-trash-o" aria-hidden="true"></i></a>
                             <?php }else{ ?>
-                                    <a class="text-black" id="deleteMktNoti<?= $val['id']; ?>" onClick="deleteNoti(<?= $val['id']; ?>,2)" title="Khôi phục về trạng thái Chưa xuất bản"><i class="fa fa-undo" aria-hidden="true"></i></a>
+                                    <a class="text-black p-0" id="deleteMktNoti<?= $val['id']; ?>" onClick="deleteNoti(<?= $val['id']; ?>,2)" title="Khôi phục về trạng thái Chưa xuất bản"><i class="fa fa-undo" aria-hidden="true"></i></a>
                             <?php } ?>
                             
                         </td>

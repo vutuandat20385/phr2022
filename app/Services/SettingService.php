@@ -202,17 +202,17 @@ class SettingService extends BaseService{
         return $parent;
     }
 
-        //    THỂ LỰC: 1
-        //    CHUẨN ĐOÁN HÌNH ẢNH: 2
-        //    HÓA SINH MIỄN DỊCH: 3
-        //    NƯỚC TIỂU: 4
-        //    CÔNG THỨC MÁU: 5
-        //    ĐÔNG MÁU: 6
-        //    HST: 7
-        //    SINH HỌC PHÂN TỬ: 8
-        //    VI SINH: 9
-        //    NHÓM MÁU: 10
-        //    CHỈ SỐ KHÁC: 11
+//    THỂ LỰC: 1
+//    CHUẨN ĐOÁN HÌNH ẢNH: 2
+//    HÓA SINH MIỄN DỊCH: 3
+//    NƯỚC TIỂU: 4
+//    CÔNG THỨC MÁU: 5
+//    ĐÔNG MÁU: 6
+//    HST: 7
+//    SINH HỌC PHÂN TỬ: 8
+//    VI SINH: 9
+//    NHÓM MÁU: 10
+//    CHỈ SỐ KHÁC: 11
     function getServiceDefineChild($parent){
         return $this->serviceDefine->where(['parentId' => $parent, 'status' => 1])->find();
     }
@@ -235,5 +235,4 @@ class SettingService extends BaseService{
     function restoreServiceDefine($id){
         return $this->serviceDefine->where(['id' => $id])->set(['status' => 1])->update();
     }
-    
 }

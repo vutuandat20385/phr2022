@@ -1,13 +1,14 @@
-<div class="row p-1" style="margin-left: 0;">
+<div class="card p-3">
     <div class="col-12">
-        <h4 ><?= $panelTitle; ?></h4>
+        <h4 class="contentHeader"><?= $panelTitle; ?></h4>
     </div>
     <?php if($phrInfo != false){ ?>
         <?php if(isset($examInfo['dia_chi'])){ $diachi = $examInfo['dia_chi'];}else{ $diachi = '';}?>
         <?php if(isset($examInfo['hospital'])){ $noikham = $examInfo['hospital'];}else{ $noikham = '';}?>
     <div class="card p-3 mb-3">
-        <?php if($examInfo['birth'] != ''){
-            $ngaysinh = date("d-m-Y", strtotime($examInfo['birth']));
+       
+        <?php if($phrInfo['birthdate'] != '' && $phrInfo['birthdate'] != '0000-00-00'){
+            $ngaysinh = date('d-m-Y', strtotime($phrInfo['birthdate']));
         }else{
             $ngaysinh = '';
         }?>
@@ -43,7 +44,7 @@
     <?php if($the_luc){ ?>
         <div class="card mb-3">
             <div class="card-header card-header-success card-header-icon">
-                <h5 class="font-weight-bold">KHÁM THỂ LỰC</h5>
+                <h5 class="font-weight-bold mb-0 text-black">KHÁM THỂ LỰC</h5>
             </div>
             <div class="card-body ">
                 <div class="row m-0">
@@ -59,7 +60,7 @@
     <?php if($kham_lam_san){ ?>
         <div class="card mb-3">
             <div class="card-header card-header-success card-header-icon">
-                <h5 class="font-weight-bold">KHÁM LÂM SÀNG</h5>
+                <h5 class="font-weight-bold mb-0 text-black">KHÁM LÂM SÀNG</h5>
             </div>
             <div class="card-body">
                 <div class="row m-0">
@@ -74,7 +75,7 @@
     <?php if($chan_doan_hinh_anh){ ?>
         <div class="card mb-3">
             <div class="card-header card-header-success card-header-icon">
-                <h5 class="font-weight-bold">CHẨN ĐOÁN HÌNH ẢNH</h5>
+                <h5 class="font-weight-bold mb-0 text-black">CHẨN ĐOÁN HÌNH ẢNH</h5>
             </div>
             <div class="card-body ">
                 <div class="row m-0">
@@ -96,7 +97,7 @@
                                 <td class="text-center">
                                     <?php if ($kq['file']){ ?>
                                         <a href="https://docs.google.com/viewer?url=<?= $kq['file'] ?>" target="_blank" style="display: block;color: black;width: 100%" title="Xem kết quả">
-                                            <i class="material-icons">description</i>
+                                            <i class="mdi mdi-file-document text-info"></i>
                                         </a>
                                     <?php } ?>
                                 </td>
@@ -112,7 +113,7 @@
     <?php if(!empty($hoa_sinh)){ ?>
         <div class="card mb-3">
             <div class="card-header card-header-success card-header-icon">
-                <h5 class="font-weight-bold">HÓA SINH - MIỄN DỊCH</h5>
+                <h5 class="font-weight-bold mb-0 text-black">HÓA SINH - MIỄN DỊCH</h5>
             </div>
             <div class="card-body ">
                 <div class="row m-0">
@@ -155,7 +156,7 @@
     <?php if(!empty($nuoc_tieu)){ ?>
         <div class="card mb-3">
             <div class="card-header card-header-success card-header-icon">
-                <h5 class="font-weight-bold">NƯỚC TIỂU</h5>
+                <h5 class="font-weight-bold mb-0 text-black">NƯỚC TIỂU</h5>
             </div>
             <div class="card-body ">
                 <div class="row m-0">
@@ -198,7 +199,7 @@
     <?php if(!empty($cong_thuc_mau)){ ?>
         <div class="card mb-3">
             <div class="card-header card-header-success card-header-icon">
-                <h5 class="font-weight-bold">CÔNG THỨC MÁU</h5>
+                <h5 class="font-weight-bold mb-0 text-black">CÔNG THỨC MÁU</h5>
             </div>
             <div class="card-body ">
                 <div class="row m-0">
@@ -241,7 +242,7 @@
     <?php if($dongmau){ ?>
         <div class="card mb-3">
             <div class="card-header card-header-success card-header-icon">
-                <h5 class="font-weight-bold">ĐÔNG MÁU</h5>
+                <h5 class="font-weight-bold mb-0 text-black">ĐÔNG MÁU</h5>
             </div>
             <div class="card-body ">
                 <div class="row m-0">
@@ -284,7 +285,7 @@
     <?php if($nhom_mau){ ?>
         <div class="card mb-3">
             <div class="card-header card-header-success card-header-icon">
-                <h5 class="font-weight-bold">NHÓM MÁU</h5>
+                <h5 class="font-weight-bold mb-0 text-black">NHÓM MÁU</h5>
             </div>
             <div class="card-body ">
                 <div class="row">
@@ -300,7 +301,7 @@
     <?php if($hst){ ?>
         <div class="card mb-3">
             <div class="card-header card-header-success card-header-icon">
-                <h5 class="font-weight-bold">ĐIỆN DI HUYẾT SẮC TỐ</h5>
+                <h5 class="font-weight-bold mb-0 text-black">ĐIỆN DI HUYẾT SẮC TỐ</h5>
             </div>
             <div class="card-body ">
                 <div class="row">
@@ -343,7 +344,7 @@
     <?php if($sinh_hoc_phan_tu){ ?>
         <div class="card mb-3">
             <div class="card-header card-header-success card-header-icon">
-                <h5 class="font-weight-bold">SINH HỌC PHÂN TỬ - Xét nghiệm gen Thalassemia</h5>
+                <h5 class="font-weight-bold mb-0 text-black">SINH HỌC PHÂN TỬ - Xét nghiệm gen Thalassemia</h5>
             </div>
             <div class="card-body ">
                 <div class="row">
@@ -386,7 +387,7 @@
     <?php if(!empty($vi_sinh)){ ?>
         <div class="card mb-3">
             <div class="card-header card-header-success card-header-icon">
-                <h5 class="font-weight-bold">VI SINH</h5>
+                <h5 class="font-weight-bold mb-0 text-black">VI SINH</h5>
             </div>
             <div class="card-body ">
                 <div class="row">
@@ -429,7 +430,7 @@
     <?php if($khac){ ?>
         <div class="card mb-3">
             <div class="card-header card-header-success card-header-icon">
-                <h5 class="font-weight-bold">CHỈ SỐ KHÁC</h5>
+                <h5 class="font-weight-bold mb-0 text-black">CHỈ SỐ KHÁC</h5>
             </div>
             <div class="card-body ">
                 <div class="row">

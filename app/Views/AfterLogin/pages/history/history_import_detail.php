@@ -1,31 +1,17 @@
- <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
-    <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="navbar-toggler-icon icon-bar"></span>
-        <span class="navbar-toggler-icon icon-bar"></span>
-        <span class="navbar-toggler-icon icon-bar"></span>
-        </button>
-    </div>
-</nav>
-<!-- End Navbar -->
- <!-- Main content -->
-    <div class="row">
-      <div class="col-12">
-        <div class="card m-0" style="min-height: 100%;">
-          <div class="card-header">
-            <div class="col-8">
+
+    <div class="card p-3">
+        <div class="row">
+            <div class="col-6 pt-1">
+                <h4 class="contentHeader"><?= $panelTitle; ?></h4>
             </div>
-          </div>
-          <!-- /.card-header -->
-          <div class="card-body">
-            <?php
-            if ($data) {
-            ?>
-               <table id="historyImportDetail" class="table table-bordered table-striped">
+            
+        </div>
+      
+        <div class="col-12 p-0 mt-2">
+            <?php if ($data) { ?>
+               <table id="historyImportDetail" class="table table-bordered table-striped d4u-table">
                 <thead>
-                  <tr>
+                  <tr class="bg-primary text-white">
                     <th>ID cột Excel</th>
                     <th>Mã nhân viên</th>
                     <th>Họ tên</th>
@@ -71,9 +57,7 @@
                   </tr>
                 </tfoot>
               </table>
-            <?php
-            } else {
-            ?>
+            <?php } else { ?>
               <div class="alert alert-warning alert-dismissible">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                 <h5><i class="icon fas fa-exclamation-triangle"></i> Không có dữ liệu!</h5>

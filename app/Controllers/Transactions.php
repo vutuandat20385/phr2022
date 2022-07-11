@@ -10,8 +10,6 @@ use App\Services\TransactionService;
 
 class Transactions extends BaseController {
 
-	private $service = '' ;
-
 	public function __construct(){
 		$this->service = new HomeService();
         $this->setting = new SettingService();
@@ -57,11 +55,11 @@ class Transactions extends BaseController {
         $time_transfer = $time1.' '.$time2;
 
         // Check phone_number
-        $user_id = $this->service->checkPhoneNumber(trim($phone));
+        $user_id = $this->transaction->checkPhoneNumber(trim($phone));
         
         if($user_id && $amount != ''){
             // Get wallet uuid
-            $walletRecord = $this->service->getWalletInfo($user_id);
+            $walletRecord = $this->transaction->getWalletInfo($user_id);
 
             $wallet             = $walletRecord['uuid'];
             $transactionCode    = 'SMS_TRANSFER_'.strtotime('now');
@@ -96,7 +94,7 @@ class Transactions extends BaseController {
                     'status' 		        => 1
                 );
 
-                $this->service->saveHistoryAutoTransfer($dataHistory);
+                $this->transaction->saveHistoryAutoTransfer($dataHistory);
 
                 $result['status'] = 1;
                 $result['msg'] = $status;
@@ -126,7 +124,7 @@ class Transactions extends BaseController {
                     'status' 		        => $s
                 );
 
-                $this->service->saveHistoryAutoTransfer($dataHistory);
+                $this->transaction->saveHistoryAutoTransfer($dataHistory);
 
                 $result['status'] = 0;
                 $result['msg'] = $status;
@@ -152,7 +150,7 @@ class Transactions extends BaseController {
                     'status'                => 0
             );
 
-            $this->service->saveHistoryAutoTransfer($dataHistory);
+            $this->transaction->saveHistoryAutoTransfer($dataHistory);
 
             $result['status'] = 0;
             $result['msg'] = $status;
@@ -211,6 +209,7 @@ class Transactions extends BaseController {
 
         $data['user'] 	= session()->get('user');
         $data['pageTitle'] = 'Danh sách giao dịch VNPAY';
+        $data['panelTitle'] = 'Danh sách giao dịch VNPAY';
         
         $page=(int)(($this->request->getVar('page')!==null) ? $this->request->getVar('page') : 1)-1;
 
@@ -261,6 +260,7 @@ class Transactions extends BaseController {
     public function momoTransactions(){
         $data['user'] 	= session()->get('user');
         $data['pageTitle'] = 'Danh sách giao dịch MOMO';
+        $data['panelTitle'] = 'Danh sách giao dịch MOMO';
         
         $page=(int)(($this->request->getVar('page')!==null) ? $this->request->getVar('page') : 1)-1;
 

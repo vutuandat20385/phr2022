@@ -18,6 +18,8 @@ class ImportService extends BaseService{
         $this->token            = new DeviceTokenModel();
         $this->setting          = new SettingsModel();
         $this->settingService   = new SettingService();
+        
+        $this->db = \Config\Database::connect();
     }
     
     public function checkUserApi($data){

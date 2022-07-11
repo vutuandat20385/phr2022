@@ -569,7 +569,7 @@ class ImportController extends BaseController{
                 'type' => 1,
 			);
 
-			$this->history->singlePHRimport($data_insertHistory);
+			$this->history->addHistoryImport($data_insertHistory);
 			return redirect()->to('trang-quan-tri/benh-an/d4u-khach-le');
 		} else {
             return redirect()->to('trang-quan-tri/benh-an/d4u-khach-le');
@@ -1154,15 +1154,15 @@ class ImportController extends BaseController{
                 'type' => 2,
             );
 
-            $this->import->addHistoryImport($data_insertHistory);
-            return redirect()->to('/history-import/kham-doan/thanh-cong');
+            $this->history->addHistoryImport($data_insertHistory);
+            return redirect()->to('/trang-quan-tri/benh-an/d4u-khach-doan');
         } else {
-            return redirect()->to('/history-import/kham-doan/that-bai');
+            return redirect()->to('/trang-quan-tri/benh-an/d4u-khach-doan');
         }
     }
 
     public function d4uListCovidImport(){
-        log_message('error', 'start ImportController ---------------------------');
+      
         $hospital = 'Doctor4U';
 
         $apiURL 		= 'http://localhost:8080';
@@ -1458,10 +1458,10 @@ class ImportController extends BaseController{
                 'type' => 3,
             );
 
-            $this->import->addHistoryImport($data_insertHistory);
-            return redirect()->to('/history-import/test-covid/thanh-cong');
+            $this->history->addHistoryImport($data_insertHistory);
+            return redirect()->to('/trang-quan-tri/benh-an/d4u-test-covid');
         } else {
-            return redirect()->to('/history-import/test-covid/that-bai');
+            return redirect()->to('/trang-quan-tri/benh-an/d4u-test-covid');
         }
 
     }

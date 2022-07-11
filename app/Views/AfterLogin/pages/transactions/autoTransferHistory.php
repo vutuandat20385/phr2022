@@ -1,15 +1,15 @@
-
-<div class="card" style="margin-top:0 !important;">
-    <div class="row card-header" style="padding-bottom: 0;">
-        <div class="col-12"><h3 class="card-title"><?= $pageTitle; ?></h3></div>
-   
-        <div class="col-8"></div>
-        <div class="col-3"><input type="text" name="search_info" class="form-control miniTextBox" placeholder="SĐT" value="<?= $info; ?>"></div>
+<div class="card p-3">
+    <div class="row">
+        <div class="col-6 pt-1">
+            <h4 class="contentHeader"><?= $pageTitle; ?></h4>
+        </div>
+        <div class="col-2 offset-3"><input type="text" name="search_info" class="form-control miniTextBox" placeholder="SĐT" value="<?= $info; ?>"></div>
         <div class="col-1"><button class="btn btn-success" style="width: 100%;" id="btn_timkiem">Tìm kiếm</button></div>
     </div>
+
     <div class="card-body" style="padding-top: 0;">
         <?php if ($history) { ?>
-        <table id="datatable" class="table table-bordered">
+        <table id="datatable" class="table table-bordered d4u-table">
             <thead>
                 <tr class="bg-primary text-white">
                     <th class="text-center">STT</th>
@@ -63,7 +63,7 @@
                     </div>    
                 </tr>
             
-                <?php } 
+                <?php }
                 }
                 ?>
 
@@ -83,7 +83,9 @@
                 <?php endif; ?>            
             </div>           
         </div>  
-        <?php } ?>
+        <?php }else{
+                        echo 'Chưa có nội dung';
+                    }  ?>
 
     </div>
     

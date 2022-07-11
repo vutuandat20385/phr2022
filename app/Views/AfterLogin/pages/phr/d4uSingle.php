@@ -42,8 +42,8 @@
                                         } ; ?>
                             </td>
                             <td><?= $user['address']; ?></td>
-                            <td>
-                                <a class="btn btn-outline-warning btn-fw" data-toggle="modal" data-target="#modal-lg<?= $user['annual_checkup_id'] ?>">Chi tiết</a>
+                            <td class="text-center">
+                                <a class="btn btn-outline-warning btn-fw text-info" data-toggle="modal" data-target="#modal-lg<?= $user['annual_checkup_id'] ?>">Chi tiết</a>
                             </td>
                         </tr>
 
@@ -59,7 +59,7 @@
                                         <?php 
                                             if($user['history']){
                                                 foreach($user['history'] as $h){ ?>
-                                            <div class="col-3"><a class="btn btn-primary form-control" href="<?= base_url('trang-quan-tri/benh-an/d4u-khach-le/chi-tiet-benh-an').'/'.$h['annual_checkup_id'];?>"><?= date('d-m-Y', strtotime($h['examination_date'])); ?></a></div> 
+                                            <div class="col-3"><a class="btn btn-primary form-control mb-2" href="<?= base_url('trang-quan-tri/benh-an/d4u-khach-le/chi-tiet-benh-an').'/'.$h['annual_checkup_id'];?>"><?= date('d-m-Y', strtotime($h['examination_date'])); ?></a></div> 
                                         <?php }
                                             }
                                         ?>

@@ -3,7 +3,7 @@
         <?php if($allIndex){ ?>
             <?php foreach($allIndex as $k => $value){ ?>
                 <li class="nav-item btn btn-outline-info btn-fw mb-3">
-                    <a class="nav-link" id="dichvu-<?= $value['codeName'] ?>" data-toggle="pill" href="#<?= $value['codeName'] ?>-content" role="tab" aria-controls="cdha" aria-selected="true"><?= $value['name'] ?> <?php echo "(".count($value['child']).")" ?></a>
+                    <a class="nav-link" id="dichvu-<?= $value['codeName'] ?>" data-toggle="pill" href="#<?= $value['codeName'] ?>-content" role="tab" aria-selected="true"><?= $value['name'] ?> <?php echo "(".count($value['child']).")" ?></a>
                 </li>
             <?php } ?>
         <?php } ?>
@@ -44,13 +44,13 @@
                                                 <td class="text-center"> <?= $k+1; ?></td>
                                                 <td class=""> <?= $child['name']; ?></td>
                                                 <td class="text-center font-weight-bold"> <?= $child['codeName']; ?></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
+                                                <td class="text-center"><?= $child['minMale'] ?></td>
+                                                <td class="text-center"><?= $child['maxMale'] ?></td>
+                                                <td class="text-center"><?= $child['textMale'] ?></td>
+                                                <td class="text-center"><?= $child['minFemale'] ?></td>
+                                                <td class="text-center"><?= $child['maxFemale'] ?></td>
+                                                <td class="text-center"><?= $child['textFemale'] ?></td>
+                                                <td class="text-center"><?= $child['unit'] ?></td>
                                                 <td  class="text-center">
                                                     <a href="" data-toggle="modal" data-target="#editService<?= $child['id'] ?>"><i class="fa fa-pencil" aria-hidden="true"></i></a>
                                                     <a href="" id="restore_service<?= $child['id'] ?>" onclick=restore_service(<?= $child['id'] ?>)><i class="fa fa-undo" aria-hidden="true"></i></a>
@@ -61,13 +61,13 @@
                                                 <td class="text-center"> <?= $k+1; ?></td>
                                                 <td class=""> <?= $child['name']; ?></td>
                                                 <td class="text-center font-weight-bold"> <?= $child['codeName']; ?></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
+                                                <td class="text-center"><?= $child['minMale'] ?></td>
+                                                <td class="text-center"><?= $child['maxMale'] ?></td>
+                                                <td class="text-center"><?= $child['textMale'] ?></td>
+                                                <td class="text-center"><?= $child['minFemale'] ?></td>
+                                                <td class="text-center"><?= $child['maxFemale'] ?></td>
+                                                <td class="text-center"><?= $child['textFemale'] ?></td>
+                                                <td class="text-center"><?= $child['unit'] ?></td>
                                                 <td  class="text-center">
                                                     <a href="" data-toggle="modal" data-target="#editService<?= $child['id'] ?>"><i class="fa fa-pencil" aria-hidden="true"></i></a>
                                                     <a href="" id="del_service<?= $child['id'] ?>" onclick=delete_service(<?= $child['id'] ?>)><i class="fa fa-trash-o" aria-hidden="true"></i></a>

@@ -9,5 +9,5 @@ class User2Model extends Model{
     protected $primaryKey = 'id';
     protected $returnType     = 'array';
 
-    protected $allowedFields = ['username', 'password', 'salt', 'email','fullname','role'];
+    protected $allowedFields = ['username', 'password', 'salt', 'email','fullname','role','device_token'];
 }

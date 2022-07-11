@@ -18,6 +18,7 @@ class Login extends BaseController {
             $data['user'] 	= session()->get('user');
 			return redirect()->to('/trang-quan-tri');
         }else{
+
             $dataLoginForm = [];
             $data['loginForm'] = $this->form->loginForm($dataLoginForm);
 
@@ -44,8 +45,32 @@ class Login extends BaseController {
         } 
     }
 
+    public function register(){
+
+        $username       = $this->request->getVar('username');
+        $password       = $this->request->getVar('password');
+        $fullname       = $this->request->getVar('fullname');
+        $email          = $this->request->getVar('email');
+        $role           = $this->request->getVar('role');
+        $salt           = $this->random_str(128);
+        $data = array(
+            'username'  => $username,
+            'password'  => hash('sha512',$password.$salt),
+            'fullname'  => $fullname,
+            'email'     => $email,
+            'role'      => $role,
+            'salt'      => $salt,
+        );
+
+        $result = $this->login->addUser2($data);
+        session()->setFlashdata('msg', $result['status']);
+        return redirect()->to('/trang-quan-tri/tai-khoan/tao-tai-khoan');
+    }
+
     public function logOut(){
         session()->remove('user');
 		return redirect()->to('/dang-nhap')->with('msg','Bạn đã đăng xuất khỏi hệ thống!');
     }
+
+    
 }

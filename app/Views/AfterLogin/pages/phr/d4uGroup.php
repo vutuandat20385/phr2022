@@ -1,15 +1,13 @@
-<div class="row p-1" style="margin-left: 0;">
-    <div class="col-12">
-        <h4 ><?= $panelTitle; ?></h4>
-    </div>
-    
-    <div class="col-3"></div>
-    <div class="col-3"></div>
-    <div class="col-4"><input type="text" name="search_info" class="form-control miniTextBox" placeholder="Họ tên, SĐT" value="<?= $info; ?>"></div>
+<div class="card p-3">
+    <div class="row">
+        <div class="col-6 pt-1">
+            <h4 class="contentHeader"><?= $panelTitle; ?></h4>
+        </div>
+    <div class="col-2 offset-2"><input type="text" name="search_info" class="form-control miniTextBox" placeholder="Họ tên, SĐT" value="<?= $info; ?>"></div>
     <div class="col-1"><button class="btn btn-outline-success btn-fw" style="width: 100%;" id="btn_timkiem">Tìm kiếm</button></div>
     <div class="col-1"> <a href="" data-toggle="modal" data-target="#modal-import" class="btn btn-outline-warning btn-fw" style="width: 100%;">Import</a></div>
     <div class="col-12 mt-1">
-        <table class="table table-bordered table-hover d4u-table" id="tblAllUsers" style="max-width: 100% !important; width:100% !important"> 
+        <table class="table table-bordered table-hover d4u-table" id="tblAllUsers"> 
             <thead>
             <tr class="bg-primary">
                 <th class="text-white text-center" style="width: 50px !important;">#</th>
@@ -42,8 +40,8 @@
                                         } ; ?>
                             </td>
                             <td><?= $user['address']; ?></td>
-                            <td>
-                                <a class="btn btn-outline-warning btn-fw" data-toggle="modal" data-target="#modal-lg<?= $val['annual_checkup_id'] ?>">Chi tiết</a>
+                            <td class="text-center">
+                                <a class="btn btn-outline-warning btn-fw text-info" data-toggle="modal" data-target="#modal-lg<?= $val['annual_checkup_id'] ?>">Chi tiết</a>
                             </td>
                         </tr>
 
@@ -51,15 +49,14 @@
                         <div class="modal fade" id="modal-lg<?= $val['annual_checkup_id'] ?>">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
-                                    <div class="modal-header"> <h4 class="modal-title">Thông tin PHR bệnh nhân</h4>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <div class="modal-header pb-0"> <h4 class="contentHeader">Thông tin PHR bệnh nhân</h4>
                                 </div>
                                 <div class="modal-body">
                                     <div class="row">
                                         <?php 
                                             if($user['history']){
                                                 foreach($user['history'] as $h){ ?>
-                                            <div class="col-3"><a class="btn btn-primary form-control" href="<?= base_url('trang-quan-tri/benh-an/d4u-khach-le/chi-tiet-benh-an').'/'.$h['annual_checkup_id'];?>"><?= $h['examination_date']; ?></a></div> 
+                                            <div class="col-3"><a class="btn btn-primary form-control mb-2" href="<?= base_url('trang-quan-tri/benh-an/d4u-khach-doan/chi-tiet-benh-an').'/'.$h['annual_checkup_id'];?>"><?= $h['examination_date']; ?></a></div> 
                                         <?php }
                                             }
                                         ?>
@@ -96,8 +93,7 @@
 </div>
 
 <script>
-
-$(document).ready(function(){
+    $(document).ready(function(){
         $('#btn_timkiem').click(function(){
             var info = $('input[name=search_info]').val();
             var link = '<?php echo base_url(); ?>' + '/trang-quan-tri/benh-an/d4u-khach-doan?page=1';
@@ -107,8 +103,5 @@ $(document).ready(function(){
             window.location.replace(link);
 
         });
-        
     });
-  
-
 </script>

@@ -84,7 +84,18 @@ class Settings extends BaseController {
     }
 
     public function indexValue(){
-        
+		$data['panelTitle'] = 'CẤU HÌNH CHỈ SỐ CHUẨN';
+
+        $data['user'] 	= session()->get('user');
+
+        $data['allIndex'] = $this->setting->getGroupStandardIndex();
+
+        foreach ($data['allIndex'] as $k => $parent){
+            $data['allIndex'][$k]['child'] = $this->setting->getStandardIndexByGroup($parent['id']);
+        }
+
+        $data = $this->getAfterLoginLayout($data, 'Trang quản trị | CẤU HÌNH THÔNG BÁO | DOCTOR4U', 'AfterLogin/pages/setting/standard_value');
+        return view('AfterLogin/main', $data);
     }
 
     public function providerManage(){

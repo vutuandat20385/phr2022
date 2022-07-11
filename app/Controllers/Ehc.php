@@ -9,7 +9,7 @@ require 'vendor/autoload.php';
 use App\Services\EhcService;
 use App\Services\SettingService;
 use App\Services\HomeService;
-
+use App\Services\PHRService;
 
 class Ehc extends BaseController {
 	
@@ -17,7 +17,7 @@ class Ehc extends BaseController {
 		$this->ehc 	= new EhcService();
 		$this->setting 	= new SettingService();
 		$this->service 	= new HomeService();
-
+		$this->phr 	= new PHRService();
 	}
 
 	public function index() {
@@ -77,7 +77,7 @@ class Ehc extends BaseController {
 	}
 
 	public function updateInfo(){
-
+		
 		$time  = 24;
 		$limit = 10;
 		$start = date('YmdHi',strtotime('-'.$time.' hour'));
@@ -99,9 +99,9 @@ class Ehc extends BaseController {
 				'url'	=> $ehc_baseUrl.'/api/Treatment/All?api='.$token['settingValue'].'&fromdate='.$start.'&todate='.$end.'&limit='.$limit,
 				'type' 	=> 0 // type=0: method get; type=1: method post 
 			);
-
+			
 			$treatments_All = $this->getAPIResult($all_treatmentApiData);
-		
+			
 			// Duyệt từng page 
 			for($treatments_page=1; $treatments_page <= $treatments_All['totalpage']; $treatments_page++){
 			
@@ -113,8 +113,9 @@ class Ehc extends BaseController {
 					'type' 	=> 0		// type=0: method get; type=1: method post 
 				);
 				$treatments = $this->getAPIResult($page_treatmentApiData);
-
+				
 				foreach($treatments['data'] as $k => $trm){
+					
 					// if($trm['sodienthoai'] == '0913534333' || $trm['sodienthoai'] == '0989995566'){
 						$idluotkham_trm = $trm['idluotkham'];
 						$patientPHRApiData = array(
@@ -124,9 +125,7 @@ class Ehc extends BaseController {
 							'type' 	=> 0		// type=0: method get; type=1: method post 
 						);
 						$patientPHR = $this->getAPIResult($patientPHRApiData);
-						// echo '<pre>';
-						// print_r($treatments);
-						// echo '</pre>';die();
+										
 						//Nguồn đến 0: Khách lẻ,  1: Khách đoàn
 						if($patientPHR['nguon_den'] == '0'){
 							
@@ -178,9 +177,7 @@ class Ehc extends BaseController {
 									
 								}else{
 									$check_idluotkham = $this->ehc->checkIdLuotKham($idluotkham);
-							
-									
-									
+				
 									// THÔNG TIN CÁ NHÂN
 										$report['id'] 			= $idluotkham;
 										$report['ma_nv'] 		= '';
@@ -301,7 +298,7 @@ class Ehc extends BaseController {
 													'A0172','A0173','A0177', 'A0156', 'A0781.1', 'A0781.2',
 													'A0782.1','A0782.2','A0783.1', 'A0783.2', 'KTC', 'A0155',
 													'A0175','A0176','A0787','A0179','A0182','A0471','A0184','A0555',
-													'A0129',
+													'A0129','A0060'
 
 												);
 		
@@ -465,7 +462,7 @@ class Ehc extends BaseController {
 									if (isset($rs['user']['uuid']) && $rs['user']['uuid'] != '') {
 										$create_user = 'Tạo user mới thành công';
 										$data['username'] = $sodienthoai;
-										$user = $this->service->checkUserApi($data);
+										$user = $this->ehc->checkUserApi($data);
 										$dataInsert = array(
 											'user_id' 			=> $user['user_id'],
 											'employee_id' 		=> '',
@@ -482,21 +479,21 @@ class Ehc extends BaseController {
 										);
 
 										//Insert vào DB
-										$insert_id = $this->service->addPHR($dataInsert);
+										$insert_id = $this->phr->addPHR($dataInsert);
 
 											if($insert_id && $chandoan != ''){
 												$annual_checkup_id = $insert_id['id'];
 												// @Send Notify & SMS
-												// if($checkSMS === 'yes'){
+												if($checkSMS === 'yes'){
 													if($chandoan != ''){
 														// Send SMS đến SĐT bệnh nhân
 														$settingName = CONTENT_SMS_RESULT_NEW;
 														$exDate = $ngaykham['day'].'-'.$ngaykham['month'].'-'.$ngaykham['year'];
 														$msg = $this->service->getSMSContent($settingName, 'sms', ['hospital' => $hospital, 'date' => $exDate]);
-														// $this->sendSMS($sodienthoai,'Doctor4U',$msg);
+														$this->sendSMS($sodienthoai,'Doctor4U',$msg);
 													}
 													
-												// }
+												}
 													
 												// ---
 
@@ -511,7 +508,7 @@ class Ehc extends BaseController {
 										$create_user = 'Tài khoản đã tồn tại !';
 										$data['username'] = $sodienthoai;
 										
-										$user = $this->service->checkUserApi($data);
+										$user = $this->ehc->checkUserApi($data);
 										$dataInsert = array(
 											'user_id' 			=> $user['user_id'],
 											'employee_id' 		=> '',
@@ -529,21 +526,21 @@ class Ehc extends BaseController {
 
 										//Insert vào DB
 											if(empty($check_idluotkham)){
-												$insert_id = $this->service->addPHR($dataInsert);	
+												$insert_id = $this->phr->addPHR($dataInsert);	
 												if($insert_id){
 													$annual_checkup_id = $insert_id['id'];
 													// @Send Notify & SMS
-													// if($checkSMS === 'yes'){
+													if($checkSMS === 'yes'){
 														if($chandoan != ''){
 															// Send SMS đến SĐT bệnh nhân
 															$settingName = CONTENT_SMS_RESULT_OLD;
 															$exDate = $ngaykham['day'].'-'.$ngaykham['month'].'-'.$ngaykham['year'];
 															$msg = $this->service->getSMSContent($settingName, 'sms', ['hospital' => $hospital, 'date' => $exDate]);
-															// $this->sendSMS($sodienthoai,'Doctor4U',$msg);
+															$this->sendSMS($sodienthoai,'Doctor4U',$msg);
 														}
 														
 														
-													// }
+													}
 
 														//Gửi Notification đến Device cho user
 														$date = date('d-m-Y');
@@ -559,21 +556,21 @@ class Ehc extends BaseController {
 											}else{
 												if(isset($check_idluotkham['annual_checkup_id']) && $check_idluotkham['annual_checkup_id'] != ''){
 													$annual_checkup_id = $check_idluotkham['annual_checkup_id'];
-													$updateTreatment = $this->service->updatePHR($annual_checkup_id, $dataInsert);
+													$updateTreatment = $this->phr->updatePHR($annual_checkup_id, $dataInsert);
 													
 													if($updateTreatment && $chandoan != ''){
 														// @Send Notify & SMS
-														// if($checkSMS === 'yes'){
+														if($checkSMS === 'yes'){
 															if($chandoan != ''){
 																// Send SMS đến SĐT bệnh nhân
 																$settingName = CONTENT_SMS_RESULT_OLD;
 																$exDate = $ngaykham['day'].'-'.$ngaykham['month'].'-'.$ngaykham['year'];
 																$msg = $this->service->getSMSContent($settingName, 'sms', ['hospital' => $hospital, 'date' => $exDate]);
-																// $this->sendSMS($sodienthoai,'Doctor4U',$msg);
+																$this->sendSMS($sodienthoai,'Doctor4U',$msg);
 															}
 															
 															
-														// }
+														}
 															//Gửi Notification đến Device cho user
 															$date = date('d-m-Y');
 															$this->service->send_notification($sodienthoai, $hospital, $date, $annual_checkup_id);
@@ -970,7 +967,7 @@ class Ehc extends BaseController {
 								'A0172','A0173','A0177', 'A0156', 'A0781.1', 'A0781.2',
 								'A0782.1','A0782.2','A0783.1', 'A0783.2', 'KTC', 'A0155',
 								'A0175','A0176','A0787','A0179','A0182','A0471','A0184','A0555',
-								'A0129',
+								'A0129','A0060'
 
 							);
 
@@ -1245,33 +1242,33 @@ class Ehc extends BaseController {
 		}
 	}
 
-	public function viewPHR($annual_checkup_id){
-		if(session()->has('user')){
-			$data['phrInfo'] = $this->ehc->getAnnualCheckupRecord($annual_checkup_id);
+	// public function viewPHR($annual_checkup_id){
+	// 	if(session()->has('user')){
+	// 		$data['phrInfo'] = $this->ehc->getAnnualCheckupRecord($annual_checkup_id);
 
-            if ($data['phrInfo'] && $data['phrInfo']['occ'] == 'auto') {
-                $data['examInfo'] = json_decode($data['phrInfo']['data'], true);
+    //         if ($data['phrInfo'] && $data['phrInfo']['occ'] == 'auto') {
+    //             $data['examInfo'] = json_decode($data['phrInfo']['data'], true);
 
-                $data['the_luc']            = $data['examInfo']['theLuc'];
-                $data['kham_lam_san']       = $data['examInfo']['khamLamSan'];
-                $data['chan_doan_hinh_anh'] = $data['examInfo']['chuanDoanHinhAnh'];
-                $data['hoa_sinh']           = $data['examInfo']['hoaSinhMienDich'];
-                $data['nuoc_tieu']          = $data['examInfo']['nuocTieu'];
-                $data['cong_thuc_mau']      = $data['examInfo']['congThucMau'];
-                $data['dong_mau']           = $data['examInfo']['dong_mau'];
-                $data['hst']                = $data['examInfo']['HST'];
-                $data['sinh_hoc_phan_tu']   = $data['examInfo']['sinh_hoc_phan_tu'];
-                $data['vi_sinh']            = $data['examInfo']['viSinh'];
-                $data['nhom_mau']           = $data['examInfo']['NhomMau'];
-                $data['khac']               = $data['examInfo']['ChiSoKhac'];
-            }
-			$data = $this->getMasterLayout($data, 'Trang quản trị', 'ehc/viewPHR');
-			return view('home/main', $data);
-		}else{
-			return redirect()->to('/login');
-		}
+    //             $data['the_luc']            = $data['examInfo']['theLuc'];
+    //             $data['kham_lam_san']       = $data['examInfo']['khamLamSan'];
+    //             $data['chan_doan_hinh_anh'] = $data['examInfo']['chuanDoanHinhAnh'];
+    //             $data['hoa_sinh']           = $data['examInfo']['hoaSinhMienDich'];
+    //             $data['nuoc_tieu']          = $data['examInfo']['nuocTieu'];
+    //             $data['cong_thuc_mau']      = $data['examInfo']['congThucMau'];
+    //             $data['dong_mau']           = $data['examInfo']['dong_mau'];
+    //             $data['hst']                = $data['examInfo']['HST'];
+    //             $data['sinh_hoc_phan_tu']   = $data['examInfo']['sinh_hoc_phan_tu'];
+    //             $data['vi_sinh']            = $data['examInfo']['viSinh'];
+    //             $data['nhom_mau']           = $data['examInfo']['NhomMau'];
+    //             $data['khac']               = $data['examInfo']['ChiSoKhac'];
+    //         }
+	// 		$data = $this->getAfterLoginLayout($data, 'Trang quản trị', 'ehc/viewPHR');
+	// 		return view('home/main', $data);
+	// 	}else{
+	// 		return redirect()->to('/login');
+	// 	}
 		
-	}
+	// }
 
 	public function getPresDrug(){
 		$ehc_baseUrl = 'https://api.1vietnam.net';
@@ -1297,311 +1294,311 @@ class Ehc extends BaseController {
 		}
 	}
 
-	public function phrDetail($visitId){
-        if(session()->has('user')){
-            $data['user'] 		= session()->get('user');
-            $phrInfo			= $this->ehc->getVisitInfo('khach-le', 'd4u', $visitId);
-            $data['phrInfo']	= $phrInfo['info'];
-            // dd($data['phrInfo']);
-            if($data['phrInfo'] != null){
-                $data['examInfo']	= json_decode($data['phrInfo']['examination_report'], true);
+	// public function phrDetail($visitId){
+    //     if(session()->has('user')){
+    //         $data['user'] 		= session()->get('user');
+    //         $phrInfo			= $this->ehc->getVisitInfo('khach-le', 'd4u', $visitId);
+    //         $data['phrInfo']	= $phrInfo['info'];
+    //         // dd($data['phrInfo']);
+    //         if($data['phrInfo'] != null){
+    //             $data['examInfo']	= json_decode($data['phrInfo']['examination_report'], true);
 
-                $examInfo 			= json_decode($data['phrInfo']['examination_report'], true);
+    //             $examInfo 			= json_decode($data['phrInfo']['examination_report'], true);
 
-                // Khám Lâm Sàng
-                $data['kham_lam_sang'] = false;
-                if(isset($examInfo['khamLamSan'])){
-                    $khamLamSang 		= $examInfo['khamLamSan'];
-                    $khamLamSang_key	= array_keys( $khamLamSang );
-                    foreach($khamLamSang_key as $k => $kls){
-                        if(strpos($kls, 'check') !== false){
-                            unset($khamLamSang_key[$k]);
-                        }
-                    }
+    //             // Khám Lâm Sàng
+    //             $data['kham_lam_sang'] = false;
+    //             if(isset($examInfo['khamLamSan'])){
+    //                 $khamLamSang 		= $examInfo['khamLamSan'];
+    //                 $khamLamSang_key	= array_keys( $khamLamSang );
+    //                 foreach($khamLamSang_key as $k => $kls){
+    //                     if(strpos($kls, 'check') !== false){
+    //                         unset($khamLamSang_key[$k]);
+    //                     }
+    //                 }
 
-                    foreach($khamLamSang_key as  $value){
-                        $gender = null;
-                        $shortName = $value;
-                        $indexValue = $khamLamSang[$value];
-                        if($indexValue != '' && $indexValue != null){
-                            $data['kham_lam_sang'][$value] = $this->showIndex($indexValue, $shortName, $gender, null);
-                        }
+    //                 foreach($khamLamSang_key as  $value){
+    //                     $gender = null;
+    //                     $shortName = $value;
+    //                     $indexValue = $khamLamSang[$value];
+    //                     if($indexValue != '' && $indexValue != null){
+    //                         $data['kham_lam_sang'][$value] = $this->showIndex($indexValue, $shortName, $gender, null);
+    //                     }
 
-                    }
-                }else{
-                    $data['kham_lam_sang'] = false;
-                }
+    //                 }
+    //             }else{
+    //                 $data['kham_lam_sang'] = false;
+    //             }
 
-                // Chẩn đoán hình ảnh
-                $data['chan_doan_hinh_anh'] = false;
-                if(isset($examInfo['chuanDoanHinhAnh'])){
-                    $chanDoanHinhAnh = $examInfo['chuanDoanHinhAnh'];
-                    $chanDoanHinhAnh_key	= array_keys( $chanDoanHinhAnh );
+    //             // Chẩn đoán hình ảnh
+    //             $data['chan_doan_hinh_anh'] = false;
+    //             if(isset($examInfo['chuanDoanHinhAnh'])){
+    //                 $chanDoanHinhAnh = $examInfo['chuanDoanHinhAnh'];
+    //                 $chanDoanHinhAnh_key	= array_keys( $chanDoanHinhAnh );
 
-                    foreach($chanDoanHinhAnh_key as $k => $cdha){
-                        if(strpos($cdha, 'check') !== false){
-                            unset($chanDoanHinhAnh_key[$k]);
-                        }
-                    }
+    //                 foreach($chanDoanHinhAnh_key as $k => $cdha){
+    //                     if(strpos($cdha, 'check') !== false){
+    //                         unset($chanDoanHinhAnh_key[$k]);
+    //                     }
+    //                 }
 
-                    foreach($chanDoanHinhAnh_key as  $value){
-                        $gender = null;
-                        $shortName = $value;
-                        $indexValue = $chanDoanHinhAnh[$value];
-                        if($indexValue != '' && $indexValue != null){
-                            $data['chan_doan_hinh_anh'][$value] = $this->showIndex($indexValue, $shortName, $gender, null);
-                        }
-                    }
-                }else{
-                    $data['chan_doan_hinh_anh'] = false;
-                }
+    //                 foreach($chanDoanHinhAnh_key as  $value){
+    //                     $gender = null;
+    //                     $shortName = $value;
+    //                     $indexValue = $chanDoanHinhAnh[$value];
+    //                     if($indexValue != '' && $indexValue != null){
+    //                         $data['chan_doan_hinh_anh'][$value] = $this->showIndex($indexValue, $shortName, $gender, null);
+    //                     }
+    //                 }
+    //             }else{
+    //                 $data['chan_doan_hinh_anh'] = false;
+    //             }
 
-                // Thăm dò chức năng
-                $data['tham_do_chuc_nang'] = false;
-                if(isset($examInfo['thamDoChucNang'])){
-                    $thamDoChucNang = $examInfo['thamDoChucNang'];
-                    $thamDoChucNang_key	= array_keys( $thamDoChucNang );
+    //             // Thăm dò chức năng
+    //             $data['tham_do_chuc_nang'] = false;
+    //             if(isset($examInfo['thamDoChucNang'])){
+    //                 $thamDoChucNang = $examInfo['thamDoChucNang'];
+    //                 $thamDoChucNang_key	= array_keys( $thamDoChucNang );
 
-                    foreach($thamDoChucNang_key as $k => $tdcn){
-                        if(strpos($tdcn, 'check') !== false){
-                            unset($thamDoChucNang_key[$k]);
-                        }
-                    }
+    //                 foreach($thamDoChucNang_key as $k => $tdcn){
+    //                     if(strpos($tdcn, 'check') !== false){
+    //                         unset($thamDoChucNang_key[$k]);
+    //                     }
+    //                 }
 
-                    foreach($thamDoChucNang_key as  $value){
+    //                 foreach($thamDoChucNang_key as  $value){
 
-                        $gender = null;
-                        $shortName = $value;
-                        $indexValue = $thamDoChucNang[$value];
-                        if($indexValue != '' && $indexValue != null){
-                            $data['tham_do_chuc_nang'][$value] = $this->showIndex($indexValue, $shortName, $gender, null);
-                        }
-                    }
+    //                     $gender = null;
+    //                     $shortName = $value;
+    //                     $indexValue = $thamDoChucNang[$value];
+    //                     if($indexValue != '' && $indexValue != null){
+    //                         $data['tham_do_chuc_nang'][$value] = $this->showIndex($indexValue, $shortName, $gender, null);
+    //                     }
+    //                 }
 
-                }else{
-                    $data['tham_do_chuc_nang'] = false;
-                }
+    //             }else{
+    //                 $data['tham_do_chuc_nang'] = false;
+    //             }
 
-                // Hóa sinh miễn dịch
-                $data['hoa_sinh_mien_dich'] = false;
-                if(isset($examInfo['hoaSinhMienDich'])){
-                    $hoaSinhMienDich = $examInfo['hoaSinhMienDich'];
-                    $hoaSinhMienDich_key	= array_keys( $hoaSinhMienDich );
+    //             // Hóa sinh miễn dịch
+    //             $data['hoa_sinh_mien_dich'] = false;
+    //             if(isset($examInfo['hoaSinhMienDich'])){
+    //                 $hoaSinhMienDich = $examInfo['hoaSinhMienDich'];
+    //                 $hoaSinhMienDich_key	= array_keys( $hoaSinhMienDich );
 
-                    foreach($hoaSinhMienDich_key as $k => $hsmd){
-                        if(strpos($hsmd, 'check') !== false){
-                            unset($hoaSinhMienDich_key[$k]);
-                        }
-                    }
+    //                 foreach($hoaSinhMienDich_key as $k => $hsmd){
+    //                     if(strpos($hsmd, 'check') !== false){
+    //                         unset($hoaSinhMienDich_key[$k]);
+    //                     }
+    //                 }
 
-                    foreach($hoaSinhMienDich_key as  $k => $value){
-                        $gender = $data['phrInfo']['gender'];
-                        $shortName = $value;
-                        $indexValue = $hoaSinhMienDich[$value];
-                        if($indexValue != '' && $indexValue != null){
-                            $data['hoa_sinh_mien_dich'][$value] = $this->showIndex($indexValue, $shortName, $gender, $k+1);
-                        }
-                    }
-                }else{
-                    $data['hoa_sinh_mien_dich'] = false;
-                }
-                // Nước tiểu
-                $data['nuoc_tieu'] = false;
-                if(isset($examInfo['nuocTieu'])){
-                    $nuocTieu = $examInfo['nuocTieu'];
-                    $nuocTieu_key	= array_keys( $nuocTieu );
+    //                 foreach($hoaSinhMienDich_key as  $k => $value){
+    //                     $gender = $data['phrInfo']['gender'];
+    //                     $shortName = $value;
+    //                     $indexValue = $hoaSinhMienDich[$value];
+    //                     if($indexValue != '' && $indexValue != null){
+    //                         $data['hoa_sinh_mien_dich'][$value] = $this->showIndex($indexValue, $shortName, $gender, $k+1);
+    //                     }
+    //                 }
+    //             }else{
+    //                 $data['hoa_sinh_mien_dich'] = false;
+    //             }
+    //             // Nước tiểu
+    //             $data['nuoc_tieu'] = false;
+    //             if(isset($examInfo['nuocTieu'])){
+    //                 $nuocTieu = $examInfo['nuocTieu'];
+    //                 $nuocTieu_key	= array_keys( $nuocTieu );
 
-                    foreach($nuocTieu_key as $k => $nt){
-                        if(strpos($nt, 'check') !== false){
-                            unset($nuocTieu_key[$k]);
-                        }
-                    }
+    //                 foreach($nuocTieu_key as $k => $nt){
+    //                     if(strpos($nt, 'check') !== false){
+    //                         unset($nuocTieu_key[$k]);
+    //                     }
+    //                 }
 
-                    foreach($nuocTieu_key as  $k => $value){
-                        $gender = $data['phrInfo']['gender'];
-                        $shortName = $value;
-                        $indexValue = $nuocTieu[$value];
-                        if($indexValue != '' && $indexValue != null){
-                            $data['nuoc_tieu'][$value] = $this->showIndex($indexValue, $shortName, $gender, $k+1);
-                        }
-                    }
-                }else{
-                    $data['nuoc_tieu'] = false;
-                }
-                // Công thức máu
-                $data['cong_thuc_mau'] = false;
-                if(isset($examInfo['congThucMau'])){
-                    $congThucMau = $examInfo['congThucMau'];
-                    $congThucMau_key	= array_keys( $congThucMau );
+    //                 foreach($nuocTieu_key as  $k => $value){
+    //                     $gender = $data['phrInfo']['gender'];
+    //                     $shortName = $value;
+    //                     $indexValue = $nuocTieu[$value];
+    //                     if($indexValue != '' && $indexValue != null){
+    //                         $data['nuoc_tieu'][$value] = $this->showIndex($indexValue, $shortName, $gender, $k+1);
+    //                     }
+    //                 }
+    //             }else{
+    //                 $data['nuoc_tieu'] = false;
+    //             }
+    //             // Công thức máu
+    //             $data['cong_thuc_mau'] = false;
+    //             if(isset($examInfo['congThucMau'])){
+    //                 $congThucMau = $examInfo['congThucMau'];
+    //                 $congThucMau_key	= array_keys( $congThucMau );
 
-                    foreach($congThucMau_key as $k => $ctm){
-                        if(strpos($ctm, 'check') !== false){
-                            unset($congThucMau_key[$k]);
-                        }
-                    }
+    //                 foreach($congThucMau_key as $k => $ctm){
+    //                     if(strpos($ctm, 'check') !== false){
+    //                         unset($congThucMau_key[$k]);
+    //                     }
+    //                 }
 
-                    foreach($congThucMau_key as  $k => $value){
-                        $gender = $data['phrInfo']['gender'];
-                        $shortName = $value;
-                        $indexValue = $congThucMau[$value];
-                        if($indexValue != '' && $indexValue != null){
-                            $data['cong_thuc_mau'][$value] = $this->showIndex($indexValue, $shortName, $gender, $k+1);
-                        }
-                    }
-                }else{
-                    $data['cong_thuc_mau'] = false;
-                }
-                // Đông máu
-                $data['dongmau'] = false;
-                if(isset($examInfo['dong_mau'])){
-                    $dong_mau = $examInfo['dong_mau'];
-                    $dong_mau_key	= array_keys( $dong_mau );
+    //                 foreach($congThucMau_key as  $k => $value){
+    //                     $gender = $data['phrInfo']['gender'];
+    //                     $shortName = $value;
+    //                     $indexValue = $congThucMau[$value];
+    //                     if($indexValue != '' && $indexValue != null){
+    //                         $data['cong_thuc_mau'][$value] = $this->showIndex($indexValue, $shortName, $gender, $k+1);
+    //                     }
+    //                 }
+    //             }else{
+    //                 $data['cong_thuc_mau'] = false;
+    //             }
+    //             // Đông máu
+    //             $data['dongmau'] = false;
+    //             if(isset($examInfo['dong_mau'])){
+    //                 $dong_mau = $examInfo['dong_mau'];
+    //                 $dong_mau_key	= array_keys( $dong_mau );
 
-                    foreach($dong_mau_key as $k => $dm){
-                        if(strpos($dm, 'check') !== false){
-                            unset($dong_mau_key[$k]);
-                        }
-                    }
+    //                 foreach($dong_mau_key as $k => $dm){
+    //                     if(strpos($dm, 'check') !== false){
+    //                         unset($dong_mau_key[$k]);
+    //                     }
+    //                 }
 
-                    foreach($dong_mau_key as  $k => $value){
-                        $gender = $data['phrInfo']['gender'];
-                        $shortName = $value;
-                        $indexValue = $dong_mau[$value];
-                        if($indexValue != '' && $indexValue != null){
-                            $data['dongmau'][$value] = $this->showIndex($indexValue, $shortName, $gender, $k+1);
-                        }
-                    }
-                }else{
-                    $data['dongmau'] = false;
-                }
+    //                 foreach($dong_mau_key as  $k => $value){
+    //                     $gender = $data['phrInfo']['gender'];
+    //                     $shortName = $value;
+    //                     $indexValue = $dong_mau[$value];
+    //                     if($indexValue != '' && $indexValue != null){
+    //                         $data['dongmau'][$value] = $this->showIndex($indexValue, $shortName, $gender, $k+1);
+    //                     }
+    //                 }
+    //             }else{
+    //                 $data['dongmau'] = false;
+    //             }
 
-                // Nhóm máu
-                $data['nhom_mau'] = false;
-                if(isset($examInfo['NhomMau'])){
-                    $NhomMau = $examInfo['NhomMau'];
-                    $NhomMau_key	= array_keys( $NhomMau );
+    //             // Nhóm máu
+    //             $data['nhom_mau'] = false;
+    //             if(isset($examInfo['NhomMau'])){
+    //                 $NhomMau = $examInfo['NhomMau'];
+    //                 $NhomMau_key	= array_keys( $NhomMau );
 
-                    foreach($NhomMau_key as $k => $nm){
-                        if(strpos($nm, 'check') !== false){
-                            unset($NhomMau_key[$k]);
-                        }
-                    }
+    //                 foreach($NhomMau_key as $k => $nm){
+    //                     if(strpos($nm, 'check') !== false){
+    //                         unset($NhomMau_key[$k]);
+    //                     }
+    //                 }
 
-                    foreach($NhomMau_key as  $k => $value){
-                        $gender = $data['phrInfo']['gender'];
-                        $shortName = $value;
-                        $indexValue = $NhomMau[$value];
-                        if($indexValue != '' && $indexValue != null){
-                            $data['nhom_mau'][$value] = $this->showIndex($indexValue, $shortName, $gender, $k+1);
-                        }
-                    }
-                }else{
-                    $data['nhom_mau'] = false;
-                }
-                // Điện di Huyết Sắc Tố
-                $data['huyet_sac_to'] = false;
-                if(isset($examInfo['HST'])){
-                    $HST = $examInfo['HST'];
-                    $HST_key	= array_keys( $HST );
+    //                 foreach($NhomMau_key as  $k => $value){
+    //                     $gender = $data['phrInfo']['gender'];
+    //                     $shortName = $value;
+    //                     $indexValue = $NhomMau[$value];
+    //                     if($indexValue != '' && $indexValue != null){
+    //                         $data['nhom_mau'][$value] = $this->showIndex($indexValue, $shortName, $gender, $k+1);
+    //                     }
+    //                 }
+    //             }else{
+    //                 $data['nhom_mau'] = false;
+    //             }
+    //             // Điện di Huyết Sắc Tố
+    //             $data['huyet_sac_to'] = false;
+    //             if(isset($examInfo['HST'])){
+    //                 $HST = $examInfo['HST'];
+    //                 $HST_key	= array_keys( $HST );
 
-                    foreach($HST_key as $k => $hst){
-                        if(strpos($hst, 'check') !== false){
-                            unset($HST_key[$k]);
-                        }
-                    }
+    //                 foreach($HST_key as $k => $hst){
+    //                     if(strpos($hst, 'check') !== false){
+    //                         unset($HST_key[$k]);
+    //                     }
+    //                 }
 
-                    foreach($HST_key as  $k => $value){
-                        $gender = $data['phrInfo']['gender'];
-                        $shortName = $value;
-                        $indexValue = $HST[$value];
-                        if($indexValue != '' && $indexValue != null){
-                            $data['huyet_sac_to'][$value] = $this->showIndex($indexValue, $shortName, $gender, $k+1);
-                        }
-                    }
-                }else{
-                    $data['huyet_sac_to'] = false;
-                }
-                // Sinh học phân tử
-                $data['shpt'] = false;
-                if(isset($examInfo['sinh_hoc_phan_tu'])){
-                    $sinh_hoc_phan_tu = $examInfo['sinh_hoc_phan_tu'];
-                    $sinh_hoc_phan_tu_key	= array_keys( $sinh_hoc_phan_tu );
+    //                 foreach($HST_key as  $k => $value){
+    //                     $gender = $data['phrInfo']['gender'];
+    //                     $shortName = $value;
+    //                     $indexValue = $HST[$value];
+    //                     if($indexValue != '' && $indexValue != null){
+    //                         $data['huyet_sac_to'][$value] = $this->showIndex($indexValue, $shortName, $gender, $k+1);
+    //                     }
+    //                 }
+    //             }else{
+    //                 $data['huyet_sac_to'] = false;
+    //             }
+    //             // Sinh học phân tử
+    //             $data['shpt'] = false;
+    //             if(isset($examInfo['sinh_hoc_phan_tu'])){
+    //                 $sinh_hoc_phan_tu = $examInfo['sinh_hoc_phan_tu'];
+    //                 $sinh_hoc_phan_tu_key	= array_keys( $sinh_hoc_phan_tu );
 
-                    foreach($sinh_hoc_phan_tu_key as $k => $shpt){
-                        if(strpos($shpt, 'check') !== false){
-                            unset($sinh_hoc_phan_tu_key[$k]);
-                        }
-                    }
+    //                 foreach($sinh_hoc_phan_tu_key as $k => $shpt){
+    //                     if(strpos($shpt, 'check') !== false){
+    //                         unset($sinh_hoc_phan_tu_key[$k]);
+    //                     }
+    //                 }
 
-                    foreach($sinh_hoc_phan_tu_key as  $k => $value){
-                        $gender = $data['phrInfo']['gender'];
-                        $shortName = $value;
-                        $indexValue = $sinh_hoc_phan_tu[$value];
-                        if($indexValue != '' && $indexValue != null){
-                            $data['shpt'][$value] = $this->showIndex($indexValue, $shortName, $gender, $k+1);
-                        }
-                    }
-                }else{
-                    $data['shpt'] = false;
-                }
+    //                 foreach($sinh_hoc_phan_tu_key as  $k => $value){
+    //                     $gender = $data['phrInfo']['gender'];
+    //                     $shortName = $value;
+    //                     $indexValue = $sinh_hoc_phan_tu[$value];
+    //                     if($indexValue != '' && $indexValue != null){
+    //                         $data['shpt'][$value] = $this->showIndex($indexValue, $shortName, $gender, $k+1);
+    //                     }
+    //                 }
+    //             }else{
+    //                 $data['shpt'] = false;
+    //             }
 
-                // Vi sinh
-                $data['vi_sinh'] = false;
-                if(isset($examInfo['viSinh'])){
-                    $viSinh = $examInfo['viSinh'];
-                    $viSinh_key	= array_keys( $viSinh );
+    //             // Vi sinh
+    //             $data['vi_sinh'] = false;
+    //             if(isset($examInfo['viSinh'])){
+    //                 $viSinh = $examInfo['viSinh'];
+    //                 $viSinh_key	= array_keys( $viSinh );
 
-                    foreach($viSinh_key as $k => $vs){
-                        if(strpos($vs, 'check') !== false){
-                            unset($viSinh_key[$k]);
-                        }
-                    }
+    //                 foreach($viSinh_key as $k => $vs){
+    //                     if(strpos($vs, 'check') !== false){
+    //                         unset($viSinh_key[$k]);
+    //                     }
+    //                 }
 
-                    foreach($viSinh_key as  $k => $value){
-                        $gender = $data['phrInfo']['gender'];
-                        $shortName = $value;
-                        $indexValue = $viSinh[$value];
-                        if($indexValue != '' && $indexValue != null){
-                            $data['vi_sinh'][$value] = $this->showIndex($indexValue, $shortName, $gender, $k+1);
-                        }
-                    }
-                }else{
-                    $data['vi_sinh'] = false;
-                }
+    //                 foreach($viSinh_key as  $k => $value){
+    //                     $gender = $data['phrInfo']['gender'];
+    //                     $shortName = $value;
+    //                     $indexValue = $viSinh[$value];
+    //                     if($indexValue != '' && $indexValue != null){
+    //                         $data['vi_sinh'][$value] = $this->showIndex($indexValue, $shortName, $gender, $k+1);
+    //                     }
+    //                 }
+    //             }else{
+    //                 $data['vi_sinh'] = false;
+    //             }
 
-                // Chỉ số khác
-                $data['chi_so_khac'] = false;
-                if(isset($examInfo['ChiSoKhac'])){
-                    $ChiSoKhac = $examInfo['ChiSoKhac'];
-                    $ChiSoKhac_key	= array_keys( $ChiSoKhac );
+    //             // Chỉ số khác
+    //             $data['chi_so_khac'] = false;
+    //             if(isset($examInfo['ChiSoKhac'])){
+    //                 $ChiSoKhac = $examInfo['ChiSoKhac'];
+    //                 $ChiSoKhac_key	= array_keys( $ChiSoKhac );
 
-                    foreach($ChiSoKhac_key as $k => $csk){
-                        if(strpos($csk, 'check') !== false){
-                            unset($ChiSoKhac_key[$k]);
-                        }
-                    }
+    //                 foreach($ChiSoKhac_key as $k => $csk){
+    //                     if(strpos($csk, 'check') !== false){
+    //                         unset($ChiSoKhac_key[$k]);
+    //                     }
+    //                 }
 
-                    foreach($ChiSoKhac_key as  $k => $value){
-                        $gender = $data['phrInfo']['gender'];
-                        $shortName = $value;
-                        $indexValue = $ChiSoKhac[$value];
-                        if($indexValue != '' && $indexValue != null){
-                            $data['chi_so_khac'][$value] = $this->showIndex($indexValue, $shortName, $gender, $k+1);
-                        }
-                    }
-                }else{
-                    $data['chi_so_khac'] = false;
-                }
+    //                 foreach($ChiSoKhac_key as  $k => $value){
+    //                     $gender = $data['phrInfo']['gender'];
+    //                     $shortName = $value;
+    //                     $indexValue = $ChiSoKhac[$value];
+    //                     if($indexValue != '' && $indexValue != null){
+    //                         $data['chi_so_khac'][$value] = $this->showIndex($indexValue, $shortName, $gender, $k+1);
+    //                     }
+    //                 }
+    //             }else{
+    //                 $data['chi_so_khac'] = false;
+    //             }
 
-            }
-            // $data = $this->getMasterLayout($data, 'Thông tin khám bệnh', 'AfterLogin/pages/listPHR/detailPHR');
-			$data = $this->getMasterLayout($data, 'Trang quản trị', 'ehc/detailPHR');
-            // return view('AfterLogin/main', $data);
-			return view('home/main', $data);
-        }else{
-            return redirect()->to('/dang-nhap');
-        }
-    }
+    //         }
+    //         // $data = $this->getMasterLayout($data, 'Thông tin khám bệnh', 'AfterLogin/pages/listPHR/detailPHR');
+	// 		$data = $this->getAfterLoginLayout($data, 'Trang quản trị', 'ehc/detailPHR');
+    //         // return view('AfterLogin/main', $data);
+	// 		return view('home/main', $data);
+    //     }else{
+    //         return redirect()->to('/dang-nhap');
+    //     }
+    // }
 
 	public function showIndex($indexValue, $shortName, $gender, $key){
         $standardValue = $this->standard->where(['shortName' => $shortName, 'gender' => $gender])->first();

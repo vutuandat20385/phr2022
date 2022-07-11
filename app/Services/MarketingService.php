@@ -9,6 +9,17 @@ class MarketingService extends BaseService{
         $this->userActive = new UserActiveNoteModel();
     }
 
+    public function countAllActiveUsersList(){
+    
+        $query = "select ual.phone_number from user_active_log as ual
+                    left join users as u ON u.username = ual.user_name
+                    where u.retired = 0 AND ual.phone_number NOT IN (SELECT pa.value FROM provider pro LEFT JOIN person_attribute pa ON pa.person_id = pro.person_id WHERE pro.retired = 0)
+                    group by ual.phone_number";
+
+        $activeList = $this->db->query($query);
+        return $activeList->getResultArray();
+    }
+
     public function getActiveUsersList($start, $limit){
     
         $query = "select pa.value, pn.given_name, ual.date_created as last_active, uan.note from user_active_log as ual

@@ -9,10 +9,14 @@ use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
-
 use TechAPI\Api\SendBrandnameOtp;
 use TechAPI\Exception as TechException;
 use TechAPI\Auth\AccessToken;
+
+use App\Models\UserModel;
+use App\Models\DeviceTokenModel;
+
+use App\Services\SettingService;
 
 /**
  * Class BaseController
@@ -24,38 +28,52 @@ use TechAPI\Auth\AccessToken;
  *
  * For security be sure to declare any new methods as protected or private.
  */
+
 class BaseController extends Controller
 {
-    /**
-     * Instance of the main Request object.
-     *
-     * @var CLIRequest|IncomingRequest
-     */
-    protected $request;
 
-    /**
-     * An array of helpers to be loaded automatically upon
-     * class instantiation. These helpers will be available
-     * to all other controllers that extend BaseController.
-     *
-     * @var array
-     */
-    protected $helpers = [];
+	public function __construct(){
+		$this->user		= new UserModel();
+		$this->token	= new DeviceTokenModel();
+		$this->setting 	= new SettingService();
 
-    /**
-     * Constructor.
-     */
-    public function initController(RequestInterface $request, ResponseInterface $response, LoggerInterface $logger)
-    {
-        // Do Not Edit This Line
-        parent::initController($request, $response, $logger);
+	}
+	/**
+	 * Instance of the main Request object.
+	 *
+	 * @var IncomingRequest|CLIRequest
+	 */
+	protected $request;
 
-        // Preload any models, libraries, etc, here.
+	/**
+	 * An array of helpers to be loaded automatically upon
+	 * class instantiation. These helpers will be available
+	 * to all other controllers that extend BaseController.
+	 *
+	 * @var array
+	 */
+	protected $helpers = [];
 
-        // E.g.: $this->session = \Config\Services::session();
-    }
+	/**
+	 * Constructor.
+	 *
+	 * @param RequestInterface  $request
+	 * @param ResponseInterface $response
+	 * @param LoggerInterface   $logger
+	 */
+	public function initController(RequestInterface $request, ResponseInterface $response, LoggerInterface $logger)
+	{
+		// Do Not Edit This Line
+		parent::initController($request, $response, $logger);
 
-    //CHUYỂN ĐỔI SĐT TỪ 11 SỐ SANG 10 SỐ
+		//--------------------------------------------------------------------
+		// Preload any models, libraries, etc, here.
+		//--------------------------------------------------------------------
+		// E.g.: $this->session = \Config\Services::session();
+		
+	}
+
+	//CHUYỂN ĐỔI SĐT TỪ 11 SỐ SANG 10 SỐ
     public function convertPhoneDigit($phone){
         $d_convert = [
             '0120' => '070',
@@ -94,7 +112,6 @@ class BaseController extends Controller
             return $phone;
         }
     }
-
 
     public function getBeforeLoginLayout($data, $title, $content){
 		$data['title'] 		= $title;
@@ -348,4 +365,134 @@ class BaseController extends Controller
         curl_close($ch);
     }
 
+    public function getPDFLayout($data, $title, $content){
+        $data['title'] 		= $title;
+        $data['header'] 	= view('AfterLogin/pages/pdf/layout/header');
+        $data['footer'] 	= view('AfterLogin/pages/pdf/layout/footer');
+        $data['content'] 	= view($content, $data);
+
+        return $data;
+    }
+
+    function apiTransaction($data){
+
+		$data_string = json_encode($data, true);
+
+		// Gọi API tạo Transaction mới
+		$url = 'http://localhost:8080/openmrs/ws/rest/v1/transaction';
+
+		// Login to get COOKIE
+		$dataLogin = array(
+			'username' => ADMIN_USERNAME,
+			'password' => ADMIN_PASSWORD
+		);
+		$login = $this->apiLogin($dataLogin);
+		// print_r($login['sessionId']);
+
+		$ch = curl_init($url);
+		$strCookie = 'JSESSIONID='.$login['sessionId'].'; Path=/openmrs; HttpOnly;';
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+		curl_setopt($ch, CURLOPT_COOKIE, $strCookie );
+		$result = curl_exec($ch);
+		curl_close($ch);
+		$rs = json_decode($result, true);
+
+		return $rs;
+	}
+
+    function random_str(
+		int $length = 64,
+		string $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+	    ): string {
+		
+		$pieces = [];
+		$max = mb_strlen($keyspace, '8bit') - 1;
+		for ($i = 0; $i < $length; ++$i) {
+			$pieces []= $keyspace[random_int(0, $max)];
+		}
+		return implode('', $pieces);
+	}
+
+    public function sendNotification($phone, $content){
+        // Dùng số điện thoại để lấy thông tin user
+        $dataUser['username'] = $phone;
+        $dataUser['retired'] = 0;
+        
+        $user = $this->checkUserApi($dataUser);
+
+        // Lấy tất cả Device Token (ứng với tất cả các điện thoại user đó đã dùng để đăng nhập app)
+        $dataCheckDevice = array(
+            'creator'   => $user['user_id'],
+            'voided'    => 0
+        );
+        $rs_token = $this->getDeviceToken($dataCheckDevice);
+
+        // Trường hợp tồn tại ít nhất 1 Device Token => gửi Notification
+        if(count($rs_token)>0){
+            foreach($rs_token as $val){
+			
+				//Lấy tiêu đề & nội dung thông báo theo Cấu hình Notification
+					$titleArr = $this->setting->getSettingValue(['settingType' => 'notification', 'settingName' => 'title-uploadpdf-covid']);
+					$notificationTitle = $titleArr['settingValue'];
+				
+					$contentArr = $this->setting->getSettingValue(['settingType' => 'notification', 'settingName' => 'content-uploadpdf-covid']);
+					$notificationContent = str_replace('[ngay]', $content['date'], $contentArr['settingValue']);
+					
+					$notificationArray = array();
+					$notificationArray["content_available"] = true;
+					$notificationArray["title"] = $notificationTitle;
+					$notificationArray["body"]  = $notificationContent;
+					// $notificationArray["sound"] = "default";
+					$notificationArray["sound"] = "doctor4u.wav";
+					$notificationArray["android_channel_id"] = "sound-channel-id";
+
+						$url = 'https://fcm.googleapis.com/fcm/send';
+						$token = $val['token'];
+
+						$dataField = array(
+							'data' => $phone,
+							'type' => 'notification'
+						);
+					
+						$fields = array(
+							'content_available' => true,
+							'to'                => $token,
+							'notification'      => $notificationArray,
+							'data'              => $dataField
+						);
+						// Your Firebase Server API Key
+						$headers = array(
+							'Authorization:key=AAAAgcNqugA:APA91bE0b225pJnZFw6y80xd8-KEt5QSGY5Oac1ETCkbvip4In2MsEo05Jus1brSmdUqLY_gRIoYsQYT_S67A46Sk-zL3H-shnThnAcdQArMaapGBz4DWg5xEvsEXIYKkEEabLyzAfmr', 
+							'Content-Type:application/json'
+						);
+						// Open curl connection
+						$ch = curl_init();
+						// Set the url, number of POST vars, POST data
+						curl_setopt($ch, CURLOPT_URL, $url);
+						curl_setopt($ch, CURLOPT_POST, true);
+						curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+						curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+						curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+						curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+						$result = curl_exec($ch);
+
+						if ($result === false) {
+						
+							die('Curl failed: ' . curl_error($ch));
+						}
+						curl_close($ch);
+						
+            }
+            return true;
+        }else{
+			return false;
+		}
+    }
 }

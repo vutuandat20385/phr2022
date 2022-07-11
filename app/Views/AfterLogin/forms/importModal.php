@@ -11,14 +11,6 @@
             <form action="<?= $action; ?>" method="post" enctype="multipart/form-data">
                 Upload excel file : 
                 <input type="file" name="uploadFile" value="" class="form-control" /><br>
-
-                <?php if($type == 'khach-doan'){ ?>
-                    Tên công ty khách đoàn:
-                    <input type="text" name="company" value="" class="form-control" /><br>
-                <?php } ?>
-
-                <input type="text" name="hospitalId" value="<?= $hospital_id; ?>" class="form-control" hidden/>
-                <input type="text" name="hospital" value="<?= $hospital; ?>" class="form-control" hidden/>
                
                 <div class="form-check form-check-success">
                     <label class="form-check-label">

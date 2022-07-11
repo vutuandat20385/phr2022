@@ -2,11 +2,15 @@
 namespace App\Services;
 
 use App\Models\UserModel;
+use App\Models\User2Model;
+use App\Models\Users2RolesModel;
 use App\Models\HistoryImportModel;
 
 class AccountService extends BaseService{
     public function __construct(){
         $this->user = new UserModel();
+        $this->user2 = new User2Model();
+        $this->user2role = new Users2RolesModel();
         $this->history = new HistoryImportModel();
 
         $this->db = \Config\Database::connect();
@@ -101,7 +105,7 @@ class AccountService extends BaseService{
             $listCodeArr = $this->db->query($query_referralCode)->getResultArray();
             // Get Referred Code
             $sql_referralCode = "SELECT * FROM referral_history WHERE phone_number='" . $u['value'] . "'";
-            log_message('error', $sql_referralCode);
+            // log_message('error', $sql_referralCode);
             $rCodeArr = $this->db->query($sql_referralCode)->getResultArray();
 
             $result[$k]['code'] = $rCodeArr[0]['referral_code'];
@@ -442,4 +446,22 @@ class AccountService extends BaseService{
 
         return $result;
     }
+
+    public function getManagerList(){
+        return $this->user2->join('users2_roles', 'users2_roles.role_id = users2.role','LEFT')->where(['status' => 1])->findAll();
+    }
+
+    public function deleteAccount($id){
+        return $this->user2->set(['status' => 0])->where(['id' => $id])->update();
+    }
+
+    public function updateAccount2($id, $data){
+        return $this->user2->set($data)->where(['id' => $id])->update();
+    }
+
+    public function getRoleList(){
+        return $this->user2role->findAll();
+    }
+
+
 }

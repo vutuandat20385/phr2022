@@ -4,7 +4,7 @@
         <div class="col-3 pt-2">
             <h4 class="contentHeader"><?= $panelTitle; ?></h4>
         </div>
-        <div class="col-2" style="margin-top: 3px;"><input type="text" name="date_from" id="datetimepicker2" class="form-control u_datepicker date_from miniTextBox" placeholder="Từ ngày" value="<?= $date_from; ?>"></div>
+        <div class="col-2" style="margin-top: 3px;"><input type="text" name="date_from" id="" class="form-control u_datepicker date_from miniTextBox" placeholder="Từ ngày" value="<?= $date_from; ?>"></div>
         <div class="col-2"style="margin-top: 3px;"><input type="text" name="date_to" class="form-control u_datepicker date_to miniTextBox" placeholder="Đến ngày" value="<?= $date_to; ?>"></div>
         <div class="col-3"style="margin-top: 3px;"><input type="text" name="search_info" class="form-control miniTextBox" placeholder="Họ tên, SĐT" value="<?= $info; ?>"></div>
         <div class="col-1"><button class="btn btn-success" style="width: 100%;" id="btn_timkiem">Tìm kiếm</button></div>
@@ -15,7 +15,7 @@
         <?php if ($history) { ?>
             <?php $pager = \Config\Services::pager(); ?>
             <br>
-        <table id="datatable" class="table table-bordered table-striped">
+        <table id="datatable" class="table table-bordered table-striped d4u-table">
             <thead>
                 <tr class="bg-primary text-white">
                     <td class="w30"><input class="w30" type="checkbox" value="" id="checkAll"></td>
@@ -44,7 +44,7 @@
                         <td class="text-center" style="width: 100px;"><?= date('d-m-Y',strtotime($val['birthdate'])); ?></td>
                         <td class="text-center"><?= $val['conclusion'] ?></td>
                         <td class="text-center" style="width: 100px;"><?= date('d-m-Y',strtotime($val['exam_date'])); ?></td>
-                        <td class="text-center"><a class="btn btn-warning text-white" style="line-height: 1; padding: 10px 30px;"  href="<?= base_url('chi-tiet-benh-an');?>/<?= $val['annual_checkup_id'] ?>">Chi tiết</a></td>
+                        <td class="text-center"><a class="btn btn-warning text-white" style="line-height: 1; padding: 10px 30px;"  href="<?= base_url('trang-quan-tri/benh-an/d4u-khach-le/chi-tiet-benh-an');?>/<?= $val['annual_checkup_id'] ?>">Chi tiết</a></td>
                     </tr>
                     <!-- /.modal -->
                     <div class="modal fade" id="modal-lg<?= $val['annual_checkup_id'] ?>">
@@ -81,7 +81,7 @@
             </div>
             <div class="col-md-6 div-phantrang">
                 <?php if ($pager):?>
-                    <?php $pagi_path = '/ehc/cap-nhat/'.$link; ?>
+                    <?php $pagi_path = '/trang-quan-tri/ehc/'.$link; ?>
                     <?php $pager->setPath($pagi_path); ?>
                     <?= $pager->links(); ?>                  
                 <?php endif; ?>            
@@ -101,7 +101,7 @@
 
         $('#btn_timkiem').click(function(){
             var info = $('input[name=search_info]').val();
-            var link = '<?php echo base_url('ehc/cap-nhat'); ?>' + '/<?= $link; ?>?page=1';
+            var link = '<?php echo base_url('/trang-quan-tri/ehc'); ?>' + '<?= $link; ?>?page=1';
 
             if(info != ''){ link += '&info='+info; }
 
@@ -110,6 +110,7 @@
         });
 
         $('#btn_capnhat').click(function(){
+           
             var treatmentList = '';
             // Lấy danh sách checkbox
             var checkboxes = document.getElementsByName('treatment[]');
@@ -122,7 +123,7 @@
             if(treatmentList == ''){
                 // window.location.href = "<?php echo base_url(); ?>/ehc/cap-nhat-thong-tin";
                 $.ajax({
-                    url : "<?php echo base_url(); ?>/ehc/cap-nhat-thong-tin",
+                    url : "<?= base_url('trang-quan-tri/ehc/cap-nhat-thong-tin'); ?>",
                     type : "get",
                     data : {
                     },
@@ -134,7 +135,7 @@
             }else{
                 // alert(treatmentList);
                 $.ajax({
-                    url : "<?php echo base_url(); ?>/ehc/cap-nhat-lai",
+                    url : "<?php echo base_url(); ?>/trang-quan-tri/ehc/cap-nhat-lai",
                     type : "post",
                     data : {
                         treatmentList : treatmentList

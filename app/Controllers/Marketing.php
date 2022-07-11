@@ -26,7 +26,7 @@ class Marketing extends BaseController {
         $data['start']	= ($this->request->getVar('start')!==null) ? $this->request->getVar('start'):'';
         $data['end']		= ($this->request->getVar('end')!==null) ? $this->request->getVar('end'):'';
 
-        $perPage 		=  10;
+        $perPage 		=  20;
         $dataMkt 		= array(
             'info' 	=> $data['info'],
             'start' => $data['start'],
@@ -160,16 +160,14 @@ class Marketing extends BaseController {
         $data['user'] 	= session()->get('user');
 
         $page=(int)(($this->request->getVar('page')!==null)?$this->request->getVar('page'):1)-1;
-		$perPage =  15;
+		$perPage =  20;
 
-        $allActiveUsers = $this->marketing->getActiveUsersList('','');
+        $allActiveUsers = $this->marketing->countAllActiveUsersList();
         if(!empty($allActiveUsers)){
             $totalUsers = count($allActiveUsers);
             service('pager')->makeLinks($page+1, $perPage, $totalUsers);
             $start = $page * $perPage;
             $data['posts'] = $this->marketing->getActiveUsersList($start, $perPage);
-
-            $countAll = $totalUsers;
 
             foreach($data['posts'] as $k => $value){
                 $data['posts'][$k]['index'] = $totalUsers - $start - $k;
@@ -194,5 +192,35 @@ class Marketing extends BaseController {
         return $this->marketing->updateNoteInfo($phone,$note);
 
     }
+
+    public function commandMarketingNotification(){
+		// Check time to get list marketing notifications
+		$time = date('Y-m-d H:i:s');
+		$result = $this->marketing->getListMarketingNotification($time);
+		if(!empty($result)){
+			foreach($result as $k => $noti){
+
+				$dataNoti = array(
+					'content' 	=> $noti['content'],
+					'link'		=> $noti['link']
+				);
+
+				$result = $this->sendMarketingNotification($dataNoti);
+				
+				if(isset($result['uuid']) && $result['uuid'] != ''){
+					$this->marketing->updateStatus($noti['id']);
+				}
+			}
+		}
+	}
+
+    public function sendMarketingNotification($dataNotification){
+		$data = array(
+			'content' 	=> $dataNotification['content'],
+			'link'		=> $dataNotification['link']
+		);
+		$result = $this->apiMarketingNotification($data);
+		return $result;
+	}
   
 }

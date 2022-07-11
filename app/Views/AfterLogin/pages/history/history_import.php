@@ -1,71 +1,65 @@
-
-<!-- Main content -->
-
-<div class="card m-0 ">
-  <div class="card-header">
-    <div class="col-12">
-        <h4 ><?= $panelTitle; ?></h4>
+<div class="card p-3">
+    <div class="row">
+        <div class="col-6 pt-1">
+            <h4 class="contentHeader"><?= $panelTitle; ?></h4>
+        </div>
+        
     </div>
-  </div>
-  <!-- /.card-header -->
-  <div class="card-body">
-    <?php
-    if ($phr) {
-    ?>
-        <table id="historyImport" class="table table-bordered table-hover d4u-table">
-        <thead>
-          <tr>
-            <th>Id</th>
-            <th>File</th>
-            <th>Người Import</th>
-            <th>Thành công</th>
-            <th>Thất bại</th>
-            <th>Ngày</th>
-            <th>Thông tin</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php
-          foreach ($phr as $val) {
-          ?>
-            <tr>
-              <td><?php echo $val['id'] ?></td>
-              <td><?php echo $val['file_name'] ?></td>
-              <td><?php echo $val['fullname'] ?></td>
-              <td><?php echo $val['count_success'] ?></td>
-              <td><?php echo $val['count_false'] ?></td>
-              <td><?php echo $val['date'] ?></td>
-              <td><a href="<?=base_url('detail-import').'/'.$val['id'] ?>" id="view_report" type="button"  class="btn btn-block btn-warning">View</a></td>
-            </tr>
-          <?php
-          }
-          ?>
+  
+    <div class="col-12 p-0 mt-2">
+      <?php if ($phr) { ?>
+          <table id="historyImport" class="table table-bordered table-hover d4u-table">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>File</th>
+                <th>Người Import</th>
+                <th>Thành công</th>
+                <th>Thất bại</th>
+                <th>Ngày</th>
+                <th>Thông tin</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php
+              foreach ($phr as $val) {
+              ?>
+                <tr>
+                  <td><?php echo $val['id'] ?></td>
+                  <td><?php echo $val['file_name'] ?></td>
+                  <td><?php echo $val['fullname'] ?></td>
+                  <td><?php echo $val['count_success'] ?></td>
+                  <td><?php echo $val['count_false'] ?></td>
+                  <td><?php echo $val['date'] ?></td>
+                  <td><a href="<?= base_url('trang-quan-tri/lich-su/import/chi-tiet').'/'.$val['id'] ?>" id="view_report" type="button"  class="btn btn-block btn-warning">View</a></td>
+                </tr>
+              <?php
+              }
+              ?>
 
-        </tbody>
-        <tfoot>
-          <tr>
-              <th>Id</th>
-              <th>File</th>
-              <th>Người Import</th>
-              <th>Thành công</th>
-              <th>Thất bại</th>
-              <th>Ngày</th>
-              <th>Thông tin</th>
-          </tr>
-        </tfoot>
-      </table>
-    <?php
-    } else {
-    ?>
-      <div class="alert alert-warning alert-dismissible">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        <h5><i class="icon fas fa-exclamation-triangle"></i> Không có dữ liệu!</h5>
-      </div>
-    <?php
-    }
-    ?>
+            </tbody>
+            <tfoot>
+              <tr>
+                  <th>Id</th>
+                  <th>File</th>
+                  <th>Người Import</th>
+                  <th>Thành công</th>
+                  <th>Thất bại</th>
+                  <th>Ngày</th>
+                  <th>Thông tin</th>
+              </tr>
+            </tfoot>
+          </table>
+      <?php } else { ?>
+        <div class="alert alert-warning alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <h5><i class="icon fas fa-exclamation-triangle"></i> Không có dữ liệu!</h5>
+        </div>
+      <?php
+      }
+      ?>
 
-  </div>
+    </div>
   <!-- /.card-body -->
 </div>
 <!-- /.card -->

@@ -1,7 +1,7 @@
 <div class="col-12">
     <div class="card p-3">
         <div class="col-12 p-0">
-            <h4><?= $panelTitle; ?></h4>
+            <h4 class="contentHeader"><?= $panelTitle; ?></h4>
         </div>
         <table class="table table-bordered">
             <tbody>
